@@ -8,7 +8,6 @@ from typing import List, Dict, Any
 # Colab의 경우 Secrets에 OPENAI_API_KEY를 설정하세요.
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY", ""))
 
-
 # --- 📝 2. [보고서 1] 요약 보고서 생성 함수 ---
 
 def generate_summary_report(
@@ -35,7 +34,7 @@ def generate_summary_report(
     
     # 프롬프트 구성 (사용자 요청에 따라 원본 유지)
     prompt = f"""
-당신은 대학생 스타트업 아이디어를 정량적 기준에 따라 평가하고, 결과를 반드시 JSON 형식으로 반환하는 전문가입니다.
+당신은 대학생 스타업 아이디어를 정량적 기준에 따라 평가하고, 결과를 반드시 JSON 형식으로 반환하는 전문가입니다.
 
 다음은 사용자의 아이디어입니다:
 "{query}"
@@ -165,42 +164,3 @@ def generate_detailed_sources_report(
     except Exception as e:
         print(f"⚠️ [상세 보고서] GPT 호출 또는 JSON 파싱 오류: {e}")
         return {"query": query, "detailed_results": [], "error": str(e)}
-
-
-# --- ✅ 4. 예시 실행 ---
-# if __name__ == "__main__":
-    # 1. 가상 데이터 생성 (실제로는 웹/DB 검색 결과가 이 위치에 들어갑니다)
-    # user_query = "드론을 이용한 도심 내 소규모 택배 배송 시스템"
-    
-    # mock_web_docs = [
-        # {'title': '아마존, 드론 택배 프라임 에어 상용화', 'snippet': '아마존은 드론을 이용한 택배 서비스 프라임 에어를 통해 30분 내 배송을 목표로 하고 있다.', 'link': 'http://example.com/amazon', 'score': 0.92},
-        # {'title': '국내 스타트업, 드론 물류 솔루션으로 투자 유치', 'snippet': '국내의 한 스타트업이 드론을 활용한 물류 자동화 솔루션으로 시리즈 A 투자를 유치했다.', 'link': 'http://example.com/startup', 'score': 0.88}]
-    
-    # mock_db_docs = [
-        # {'title': '캠퍼스 내 도서 대출 반납 드론 시스템', 'content': '교내 도서관과 각 단과대 건물을 잇는 드론을 활용하여 학생들이 편리하게 책을 빌리고 반납할 수 있는 시스템을 제안한다.', 'link': 'http://example.com/contest1', 'score': 0.95},
-        # {'title': '의약품 긴급 배송을 위한 드론 네트워크', 'content': '산간 지역이나 교통 체증이 심한 도심 지역에 긴급 의약품을 신속하게 전달하기 위한 드론 네트워크 구축 아이디어.', 'link': 'http://example.com/internal1', 'score': 0.91}]
-    
-    # mock_approx_similar_count = 25
-
-    # print("=" * 50, flush = True)
-    # print(f"사용자 아이디어: {user_query}", flush = True)
-    # print("=" * 50, flush = True)
-
-    # 2. 요약 보고서 생성 및 출력
-    # print("\n[1/2] 정량적 요약 보고서 생성을 시작합니다...", flush = True)
-    # summary_report = generate_summary_report(
-        # query=user_query,
-        # web_docs=mock_web_docs,
-        # db_docs=mock_db_docs,
-        # approx_similar_count=mock_approx_similar_count
-    # )
-    # print(json.dumps(summary_report, indent=2, ensure_ascii=False), flush = True)
-
-    # 3. 상세 소스 분석 보고서 생성 및 출력
-    # print("\n[2/2] 상세 소스 분석 보고서 생성을 시작합니다...", flush = True)
-    # detailed_report = generate_detailed_sources_report(
-        # query=user_query,
-        # web_docs=mock_web_docs,
-        # db_docs=mock_db_docs
-    # )
-    # print(json.dumps(detailed_report, indent=2, ensure_ascii=False), flush = True)

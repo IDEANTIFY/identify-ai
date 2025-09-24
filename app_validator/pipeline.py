@@ -8,10 +8,10 @@ import time
 
 # --- ⚙️ 1. 모듈 임포트 ---
 # 각 기능별로 분리된 Python 파일에서 필요한 함수와 클래스를 가져옵니다.
-from .convert_idea_to_query import *
-from .web_search_utils import *
-from .db_search_utils import *
-from .create_report import *
+from .utils.convert_idea_to_query import *
+from .utils.web_search_utils import *
+from .utils.db_search_utils import *
+from .utils.create_report import *
 
 # --- ✅ 2. 설정 및 전역 객체 초기화 ---
 
@@ -21,17 +21,14 @@ INDEX_FILE = "dataset/crawling_total.index"
 META_FILE = "dataset/crawling_total.pkl"
 
 def initialize_components():
-    """파이프라인에 필요한 모델과 검색 엔진을 초기화합니다."""
-    print("=" * 60, flush = True)
-    print("🚀 파이프라인 초기화를 시작합니다...", flush = True)
-    
-    # Sentence Transformer 모델 로딩 (메모리에 한 번만)
     if torch.cuda.is_available():      # NVIDIA CUDA GPU 확인
         device = "cuda"
     elif torch.backends.mps.is_available():  # Apple Metal GPU (MPS) 확인
         device = "mps"
     else:                               # 둘 다 없으면 CPU 사용
         device = "cpu"
+
+    # Sentence Transformer 모델 로딩 (메모리에 한 번만)
     print(f"Sentence Transformer 모델을 로딩합니다... (Device: {device})", flush = True)
     model = SentenceTransformer(MODEL_FOLDER_PATH, device=device)
     
@@ -48,22 +45,19 @@ def initialize_components():
     
     return model, db_search_engine
 
-def execute_full_pipeline(user_idea: str) -> dict:
+def execute_full_pipeline(structured_idea: dict) -> dict:
     """
     사용자 아이디어를 입력받아 전체 검증 파이프라인을 실행하고,
     요약 및 상세 보고서를 딕셔너리 형태로 반환합니다.
 
     Args:
-        user_idea (str): 검증을 원하는 사용자의 아이디어 텍스트.
+        user_idea (str): 검증을 원하는 사용자의 아이디어 구조.
 
     Returns:
         dict: 'summary_report'와 'detailed_report'를 포함하는 딕셔너리.
     """
     
     start_time = time.time()
-    
-    # 서버 로그: 파이프라인 시작 알림
-    print(f"🚀 파이프라인 시작: \"{user_idea}\"", flush=True)
 
     # 1. 컴포넌트 초기화
     # 참고: 실제 서비스에서는 API 서버가 시작될 때 한 번만 초기화하는 것이 성능에 유리합니다.
@@ -71,8 +65,7 @@ def execute_full_pipeline(user_idea: str) -> dict:
 
     # 2. 아이디어 -> 검색 쿼리 변환
     print("\n[단계 1/4] 아이디어를 핵심 검색 쿼리로 변환 중...", flush=True)
-    structured_data = extract_structured_idea_info(user_idea)
-    search_query = generate_search_query(structured_data)
+    search_query = generate_search_query(structured_idea)
     print(f"  🔍 변환된 검색 쿼리: \"{search_query}\"", flush=True)
     
     # 3. 정보 검색 (웹 & DB 병렬 처리)
@@ -100,12 +93,12 @@ def execute_full_pipeline(user_idea: str) -> dict:
         # 요약 리포트 생성 태스크 제출
         future_summary = executor.submit(
             generate_summary_report,
-            user_idea, top_web_docs, db_search_results, approx_similar_count
+            str(structured_idea), top_web_docs, db_search_results, approx_similar_count
         )
         # 상세 리포트 생성 태스크 제출
         future_detailed = executor.submit(
             generate_detailed_sources_report,
-            user_idea, top_web_docs, db_search_results
+            str(structured_idea), top_web_docs, db_search_results
         )
         
         # 결과 취합
@@ -128,19 +121,27 @@ def execute_full_pipeline(user_idea: str) -> dict:
     return final_result
 
 # --- 테스트를 위한 실행 블록 (실제 서버에서는 호출되지 않음) ---
-# if __name__ == '__main__':
-    # test_idea = "인공지능 튜터와 실시간으로 대화하며 배우는 맞춤형 외국어 학습 애플리케이션"
+'''if __name__ == '__main__':
+    test_idea = {
+              "주요 내용": "AI 기반 식단 분석 및 맞춤형 레시피 추천 모바일 앱",
+              "도메인": "건강 및 피트니스, 푸드테크",
+              "목적": "개인 맞춤형 건강 관리 및 식습관 개선",
+              "차별성": "AI를 활용한 자동 식단 분석 및 정밀한 레시피 추천",
+              "핵심 기술": "인공지능(AI), 머신러닝, 이미지 인식(음식 사진 분석)",
+              "서비스 대상": "건강에 관심이 많은 사용자, 특정 식단이 필요한 환자"
+          }
     
     # 수정된 함수 호출
-    # reports = execute_full_pipeline(test_idea)
+    reports = execute_full_pipeline(test_idea)
     
     # 반환된 결과 확인
-    # print("\n" + "="*80)
-    # print("✅ 함수가 반환한 최종 결과:")
-    # print("-" * 60)
-    # print("📊 [요약 보고서]")
-    # print(json.dumps(reports['summary_report'], indent=2, ensure_ascii=False))
-    # print("-" * 60)
-    # print("📑 [상세 보고서]")
-    # print(json.dumps(reports['detailed_report'], indent=2, ensure_ascii=False))
-    # print("="*80)
+    print("\n" + "="*80)
+    print("✅ 함수가 반환한 최종 결과:")
+    print("-" * 60)
+    print("📊 [요약 보고서]")
+    print(json.dumps(reports['summary_report'], indent=2, ensure_ascii=False))
+    print("-" * 60)
+    print("📑 [상세 보고서]")
+    print(json.dumps(reports['detailed_report'], indent=2, ensure_ascii=False))
+    print("="*80)
+'''

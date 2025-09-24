@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 import json
 import torch
 import requests
@@ -12,8 +13,6 @@ from sentence_transformers import SentenceTransformer, util
 
 
 # --- ⚙️ API 설정 및 클라이언트 초기화 ---
-# 보안을 위해 API 키는 코드에 직접 작성하는 대신 환경 변수에서 불러옵니다.
-# 셸에서 export TAVILY_API_KEY="당신의키" 와 같이 설정할 수 있습니다.
 TAVILY_API_KEY = os.environ.get("TAVILY_API_KEY", "")
 SERPER_API_KEY = os.environ.get("SERPER_API_KEY", "")
 NAVER_CLIENT_ID = os.environ.get("NAVER_CLIENT_ID", "")
@@ -203,18 +202,3 @@ def run_web_search_pipeline(query: str, model: SentenceTransformer) -> pd.DataFr
     print("✨ 4. 원본 쿼리와의 의미적 유사도를 기준으로 결과를 재정렬합니다...", flush = True)
     reranked_df = rerank_results_by_similarity(merged_df, query, model)
     return reranked_df
-
-# if __name__ == "__main__":
-    # search_query = "LLM을 활용한 개인화 추천 시스템 구축 사례"
-    # final_results_df = run_web_search_pipeline(search_query)
-    
-    # if not final_results_df.empty:
-        # pd.set_option("display.max_colwidth", 70)
-        # print("\n--- 🏆 최종 재정렬된 검색 결과 (상위 10개) ---", flush = True)
-        # print(final_results_df.head(10), flush = True)
-        # top_3_list = get_top_n_results(final_results_df, n=3)
-        # print("\n--- 🎯 상위 3개 결과 (활용 예시) ---", flush = True)
-        # for i, item in enumerate(top_3_list):
-            # print(f"[{i+1}]\n  - Title: {item['title']}\n  - Link: {item['link']}\n  - Score: {item['similarity_score']:.4f}\n", flush = True)
-    # else:
-        # print("\n--- 최종 검색 결과가 없습니다 ---", flush = True)

@@ -16,7 +16,7 @@ class FaissSearchEngine:
         엔진 초기화 시 SentenceTransformer 모델을 로드합니다.
         GPU 사용이 가능하면 자동으로 GPU를 사용하도록 설정합니다.
         """
-        self.device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
         print(f"'{self.device}' 장치를 사용하여 모델을 로딩합니다.", flush = True)
         self.model = SentenceTransformer(model_path, device=self.device)
         self.index = None
@@ -115,44 +115,3 @@ class FaissSearchEngine:
                 results.append(item)
                 
         return results
-
-# --- ✅ 예시 실행 ---
-# if __name__ == "__main__":
-    # 0. 파일 경로 설정
-    # CSV_FILE = "/content/drive/MyDrive/Conference_2025/Dataset/crawling_total.csv"
-    # INDEX_FILE = "/content/drive/MyDrive/Conference_2025/Dataset/crawling_total.index"
-    # META_FILE = "/content/drive/MyDrive/Conference_2025/Dataset/crawling_total.pkl"
-
-    # 1. 검색 엔진 인스턴스 생성
-    # MODEL_FOLDER_PATH = "/content/drive/MyDrive/Conference_2025/ko-sroberta-multitask-local"
-    # search_engine = FaissSearchEngine(model_path=MODEL_FOLDER_PATH) # 경로를 직접 전달
-
-    # 2. 인덱스 파일이 없으면 새로 구축
-    # if not os.path.exists(INDEX_FILE):
-        # print("기존 인덱스 파일이 없습니다. 새로 구축합니다.")
-        # search_engine.build_index(
-            # csv_path=CSV_FILE,
-            # index_path=INDEX_FILE,
-            # meta_path=META_FILE
-        # )
-    # 인덱스 파일이 있으면 로드
-    # else:
-        # search_engine.load_index(
-            # index_path=INDEX_FILE,
-            # meta_path=META_FILE
-        # )
-
-    # 3. 검색 실행
-    # search_query = "인공지능을 활용한 신약 개발 동향"
-    # print(f"\n--- 쿼리: '{search_query}' ---", flush = True)
-    
-    # search_results = search_engine.search(query=search_query, top_k=5)
-
-    # 4. 결과 출력
-    # if search_results:
-        # for i, result in enumerate(search_results):
-            # print(f"[{i+1}] Score: {result['score']:.4f}", flush = True)
-            # print(f"  - Title: {result['title']}", flush = True)
-            # print(f"  - URL: {result['detail_url']}\n", flush = True)
-    # else:
-        # print("검색 결과가 없습니다.", flush = True)
