@@ -1,0 +1,20 @@
+# AI & Vector Search
+torch
+sentence-transformers
+transformers
+faiss-cpu
+openai
+tiktoken
+
+# Web Search & API Clients
+tavily-python
+requests
+
+# API Server
+fastapi
+uvicorn[standard]
+pydantic
+
+# Data Handling & Utilities
+pandas
+python-dotenv

@@ -1,0 +1,5 @@
+1. convert_idea_to_query.py, create_report.py, web_search_utils.py에 개인 api key 입력
+2. 저장소나 경로 설정
+3. 가상 환경 활성화
+4. pip install -r conference_2025/requirements.txt
+5. 파이썬 파일들 실행
