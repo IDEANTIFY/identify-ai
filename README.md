@@ -2,7 +2,7 @@
 
 
 - 구조
-- ├── app_structurizer/
+├── app_structurizer/
 │   ├── __init__.py
 │   ├── main.py                 # (신규) App 1의 FastAPI 서버
 │   └── structurizer_utils.py   # extract_structured_idea_info 함수만 포함
