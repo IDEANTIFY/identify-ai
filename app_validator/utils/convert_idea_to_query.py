@@ -1,12 +1,14 @@
-# -*- coding: utf-8 -*-
-
 import json
 import os
 from openai import OpenAI
+from dotenv import load_dotenv
+
+# .env 파일에서 환경 변수를 로드합니다.
+load_dotenv()
 
 # --- OpenAI API 클라이언트 초기화 ---
-# 환경 변수에서 API 키를 가져옵니다. 보안을 위해 코드에 직접 키를 입력하는 것보다 이 방법이 권장됩니다.
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY", ""))
+# .env 파일에 저장된 OPENAI_API_KEY를 사용합니다.
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 def generate_search_query(structured_info: dict) -> str:
     """
@@ -49,3 +51,19 @@ def generate_search_query(structured_info: dict) -> str:
         # API 실패 시, 주요 키워드를 조합하여 대체 쿼리 생성
         fallback_query = f"{cleaned_input['도메인']} {cleaned_input['핵심 기술']} {cleaned_input['주요 내용']}"
         return fallback_query.replace("정보 없음", "").strip()
+
+# if __name__ == '__main__':
+    # 1. 분석하고 싶은 아이디어를 자유롭게 서술합니다.
+    # user_idea = "블록체인 기술을 활용하여 중고거래 시 발생할 수 있는 사기를 방지하고, 거래 과정을 투명하게 기록하는 플랫폼"
+    # print(f"입력 아이디어: {user_idea}", flush = True)
+
+    # 2. 아이디어 설명으로부터 구조화된 정보를 추출합니다.
+    # print("\n[1단계] 아이디어에서 구조화된 정보 추출을 시작합니다...", flush = True)
+    # structured_data = extract_structured_idea_info(user_idea)
+
+    # 추출된 정보를 보기 좋게 출력합니다.
+    # print(json.dumps(structured_data, indent=2, ensure_ascii=False), flush = True)
+
+    # 3. 추출된 정보를 바탕으로 웹 검색 쿼리를 생성합니다.
+    # search_query = generate_search_query(structured_data)
+    # print(f"\n[최종 생성 쿼리]: {search_query}\n", flush = True)

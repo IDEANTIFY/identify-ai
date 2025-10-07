@@ -5,18 +5,25 @@ import json
 import torch
 import requests
 import pandas as pd
-from tavily import TavilyClient
+import concurrent.futures
 from urllib.parse import quote
 from typing import Dict, List, Any
-import concurrent.futures
+
+# --- 라이브러리 임포트 ---
+# [추가] dotenv 라이브러리 임포트
+from dotenv import load_dotenv
+from tavily import TavilyClient
 from sentence_transformers import SentenceTransformer, util
 
+# [추가] .env 파일에서 환경 변수를 로드
+load_dotenv()
 
 # --- ⚙️ API 설정 및 클라이언트 초기화 ---
-TAVILY_API_KEY = os.environ.get("TAVILY_API_KEY", "")
-SERPER_API_KEY = os.environ.get("SERPER_API_KEY", "")
-NAVER_CLIENT_ID = os.environ.get("NAVER_CLIENT_ID", "")
-NAVER_CLIENT_SECRET = os.environ.get("NAVER_CLIENT_SECRET", "")
+# .env 파일에 저장된 키들을 사용합니다.
+TAVILY_API_KEY = os.environ.get("TAVILY_API_KEY")
+SERPER_API_KEY = os.environ.get("SERPER_API_KEY")
+NAVER_CLIENT_ID = os.environ.get("NAVER_API_ID")
+NAVER_CLIENT_SECRET = os.environ.get("NAVER_API_SECRET")
 
 tavily_client = TavilyClient(api_key=TAVILY_API_KEY)
 HTTP_SESSION = requests.Session()  # 세션 객체 재사용
@@ -75,16 +82,7 @@ def _search_naver(query: str) -> List[Dict[str, Any]]:
 
 
 def fetch_all_search_results(query: str) -> Dict[str, List[Dict[str, Any]]]:
-    """
-    Tavily, Serper, Naver API를 병렬로 호출하여 모든 검색 결과를 가져옵니다.
-    
-    Input:
-        - query (str): 검색할 쿼리 문자열
-
-    Output:
-        - Dict[str, List[Dict[str, Any]]]: API 소스별로 정리된 결과 딕셔너리
-          예: {'tavily': [...], 'serper': [...], 'naver': [...]}
-    """
+    """Tavily, Serper, Naver API를 병렬로 호출하여 모든 검색 결과를 가져옵니다."""
     # ThreadPoolExecutor를 사용하여 각 API 호출을 병렬로 실행합니다.
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
         future_to_api = {
@@ -169,8 +167,8 @@ def rerank_results_by_similarity(
     
     cos_scores = util.cos_sim(ref_embedding, snippet_embeddings)[0]
     
-    results_df['similarity_score'] = cos_scores.cpu().tolist()
-    return results_df.sort_values(by='similarity_score', ascending=False).reset_index(drop=True)
+    results_df['score'] = cos_scores.cpu().tolist()
+    return results_df.sort_values(by='score', ascending=False).reset_index(drop=True)
 
 
 # --- (fetch_all_search_results, get_top_n_results, run_web_search_pipeline, __main__ 등 나머지 코드는 이전과 동일) ---
@@ -202,3 +200,18 @@ def run_web_search_pipeline(query: str, model: SentenceTransformer) -> pd.DataFr
     print("✨ 4. 원본 쿼리와의 의미적 유사도를 기준으로 결과를 재정렬합니다...", flush = True)
     reranked_df = rerank_results_by_similarity(merged_df, query, model)
     return reranked_df
+
+# if __name__ == "__main__":
+    # search_query = "LLM을 활용한 개인화 추천 시스템 구축 사례"
+    # final_results_df = run_web_search_pipeline(search_query)
+    
+    # if not final_results_df.empty:
+        # pd.set_option("display.max_colwidth", 70)
+        # print("\n--- 🏆 최종 재정렬된 검색 결과 (상위 10개) ---", flush = True)
+        # print(final_results_df.head(10), flush = True)
+        # top_3_list = get_top_n_results(final_results_df, n=3)
+        # print("\n--- 🎯 상위 3개 결과 (활용 예시) ---", flush = True)
+        # for i, item in enumerate(top_3_list):
+            # print(f"[{i+1}]\n  - Title: {item['title']}\n  - Link: {item['link']}\n  - Score: {item['similarity_score']:.4f}\n", flush = True)
+    # else:
+        # print("\n--- 최종 검색 결과가 없습니다 ---", flush = True)

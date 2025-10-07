@@ -2,14 +2,16 @@ import os
 import json
 from openai import OpenAI
 from typing import List, Dict, Any
+from dotenv import load_dotenv
 
-# --- ⚙️ 1. OpenAI 클라이언트 초기화 ---
-# 보안을 위해 API 키는 환경 변수에서 불러옵니다.
-# Colab의 경우 Secrets에 OPENAI_API_KEY를 설정하세요.
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY", ""))
+# .env 파일에서 환경 변수를 로드합니다.
+load_dotenv()
 
-# --- 📝 2. [보고서 1] 요약 보고서 생성 함수 ---
+# --- OpenAI API 클라이언트 초기화 ---
+# .env 파일에 저장된 OPENAI_API_KEY를 사용합니다.
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
+# --- [보고서 1] 요약 보고서 생성 함수 ---
 def generate_summary_report(
     query: str, 
     web_docs: List[Dict], 
@@ -34,7 +36,7 @@ def generate_summary_report(
     
     # 프롬프트 구성 (사용자 요청에 따라 원본 유지)
     prompt = f"""
-당신은 대학생 스타업 아이디어를 정량적 기준에 따라 평가하고, 결과를 반드시 JSON 형식으로 반환하는 전문가입니다.
+당신은 대학생 스타트업 아이디어를 정량적 기준에 따라 평가하고, 결과를 반드시 JSON 형식으로 반환하는 전문가입니다.
 
 다음은 사용자의 아이디어입니다:
 "{query}"
@@ -45,7 +47,7 @@ def generate_summary_report(
 유사한 공모전 수상작 및 내부 DB 사례:
 {db_section}
 
-다음 기준에 따라 아이디어를 평가하고, 결과를 아래에 명시된 JSON 형식 예시에 정확히 맞춰 출력해 주세요.
+다음 기준에 따라 아이디어를 평가하고, 결과를 아래에 명시된 JSON 형식 예시에 정확히 맞춰 존댓말로 출력해 주세요.
 
 [평가 기준]
 1.  total_similar_cases: 웹 검색 결과({approx_similar_count}건)와 DB 문서 수를 종합하여 전체 유사 건수를 정수로 판단.
@@ -68,7 +70,6 @@ def generate_summary_report(
   }}
 }}
 ```
-
 다른 설명 없이 JSON 객체만 생성하세요. 이제 평가를 시작하세요.
 """
     try:
@@ -118,7 +119,7 @@ def generate_detailed_sources_report(
 다음은 사용자의 아이디어입니다:
 "{query}"
 
-아래는 위 아이디어와 관련된 유사 자료 목록입니다. 각 자료를 개별적으로 분석하고 지정된 JSON 형식으로 결과를 출력해주세요.
+아래는 위 아이디어와 관련된 유사 자료 목록입니다. 각 자료를 개별적으로 분석하고 지정된 JSON 형식으로 결과를 존댓말로 출력해주세요.
 ---
 [유사한 웹 문서]
 {web_block}
@@ -134,6 +135,7 @@ def generate_detailed_sources_report(
 [
   {{
     "source_type": "web",
+    "title": "원본 문서 제목을 기반으로 “표시용 제목”을 생성. 핵심 고유명사/약어/브랜드(IaCDOG, FLOW-BIT 등)는 그대로 보존. 과한 의역·번역 금지. 원문의 언어를 유지(한국어 제목은 한국어 유지). 길이: 한글 30자 이내(영문 위주면 60자 이내). 의미 훼손 없이 축약.정보 추가/날조 금지. 없으면 TitleSeed를 거의 그대로 사용. 단일어(“희소식”)·합성표기(“Mount-ack(...)”)도 핵심을 유지.
     "link": "Link 필드 참고",
     "thumbnail": null,
     "summary": "이 서비스는 XYZ 기술을 활용해 ABC 문제를 해결하는 내용.",
@@ -164,3 +166,42 @@ def generate_detailed_sources_report(
     except Exception as e:
         print(f"⚠️ [상세 보고서] GPT 호출 또는 JSON 파싱 오류: {e}")
         return {"query": query, "detailed_results": [], "error": str(e)}
+
+
+# --- ✅ 4. 예시 실행 ---
+# if __name__ == "__main__":
+    # 1. 가상 데이터 생성 (실제로는 웹/DB 검색 결과가 이 위치에 들어갑니다)
+    # user_query = "드론을 이용한 도심 내 소규모 택배 배송 시스템"
+    
+    # mock_web_docs = [
+        # {'title': '아마존, 드론 택배 프라임 에어 상용화', 'snippet': '아마존은 드론을 이용한 택배 서비스 프라임 에어를 통해 30분 내 배송을 목표로 하고 있다.', 'link': 'http://example.com/amazon', 'score': 0.92},
+        # {'title': '국내 스타트업, 드론 물류 솔루션으로 투자 유치', 'snippet': '국내의 한 스타트업이 드론을 활용한 물류 자동화 솔루션으로 시리즈 A 투자를 유치했다.', 'link': 'http://example.com/startup', 'score': 0.88}]
+    
+    # mock_db_docs = [
+        # {'title': '캠퍼스 내 도서 대출 반납 드론 시스템', 'content': '교내 도서관과 각 단과대 건물을 잇는 드론을 활용하여 학생들이 편리하게 책을 빌리고 반납할 수 있는 시스템을 제안한다.', 'link': 'http://example.com/contest1', 'score': 0.95},
+        # {'title': '의약품 긴급 배송을 위한 드론 네트워크', 'content': '산간 지역이나 교통 체증이 심한 도심 지역에 긴급 의약품을 신속하게 전달하기 위한 드론 네트워크 구축 아이디어.', 'link': 'http://example.com/internal1', 'score': 0.91}]
+    
+    # mock_approx_similar_count = 25
+
+    # print("=" * 50, flush = True)
+    # print(f"사용자 아이디어: {user_query}", flush = True)
+    # print("=" * 50, flush = True)
+
+    # 2. 요약 보고서 생성 및 출력
+    # print("\n[1/2] 정량적 요약 보고서 생성을 시작합니다...", flush = True)
+    # summary_report = generate_summary_report(
+        # query=user_query,
+        # web_docs=mock_web_docs,
+        # db_docs=mock_db_docs,
+        # approx_similar_count=mock_approx_similar_count
+    # )
+    # print(json.dumps(summary_report, indent=2, ensure_ascii=False), flush = True)
+
+    # 3. 상세 소스 분석 보고서 생성 및 출력
+    # print("\n[2/2] 상세 소스 분석 보고서 생성을 시작합니다...", flush = True)
+    # detailed_report = generate_detailed_sources_report(
+        # query=user_query,
+        # web_docs=mock_web_docs,
+        # db_docs=mock_db_docs
+    # )
+    # print(json.dumps(detailed_report, indent=2, ensure_ascii=False), flush = True)
