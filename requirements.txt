@@ -5,6 +5,8 @@ transformers
 faiss-cpu
 openai
 tiktoken
+langchain
+langchain-openai
 
 # Web Search & API Clients
 tavily-python
