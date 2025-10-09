@@ -5,8 +5,6 @@ transformers
 faiss-cpu
 openai
 tiktoken
-langchain
-langchain-openai
 
 # Web Search & API Clients
 tavily-python
@@ -20,3 +18,9 @@ pydantic
 # Data Handling & Utilities
 pandas
 python-dotenv
+
+# LangChain & Extensions
+langchain-tavily
+langchain_community
+langchain_naver_community
+langchain_openai
