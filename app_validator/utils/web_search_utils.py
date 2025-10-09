@@ -14,11 +14,13 @@ from langchain_naver_community.tool import NaverSearchResults, NaverNewsSearch, 
 from langchain_naver_community.utils import NaverSearchAPIWrapper
 
 # 공통 설정값
+from dotenv import load_dotenv
+load_dotenv()
 
-TAVILY_API_KEY = os.environ.get("TAVILY_API_KEY", "")
-SERPER_API_KEY = os.environ.get("SERPER_API_KEY", "")
-NAVER_CLIENT_ID = os.environ.get("NAVER_CLIENT_ID", "")
-NAVER_CLIENT_SECRET = os.environ.get("NAVER_CLIENT_SECRET", "")
+TAVILY_API_KEY = os.environ.get("TAVILY_API_KEY")
+SERPER_API_KEY = os.environ.get("SERPER_API_KEY")
+NAVER_CLIENT_ID = os.environ.get("NAVER_API_ID")
+NAVER_CLIENT_SECRET = os.environ.get("NAVER_API_SECRET")
 
 # 검색 결과 개수 설정
 TAVILY_MAX_RESULTS = 10         # Tavily에서 가져올 최대 결과 수
