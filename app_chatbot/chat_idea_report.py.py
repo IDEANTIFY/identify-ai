@@ -11,8 +11,7 @@ from langchain.chains import LLMChain
 from langchain.memory import ConversationBufferMemory
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 
-class chatbot:
-    # ✨ 변경: memory를 외부에서 주입받도록 __init__ 수정
+class IdeaReportChatbot:
     def __init__(self, report_path: str, user_info: Dict, structured_idea: Dict, openai_api_key: str, memory: ConversationBufferMemory):
         if not os.path.exists(report_path):
             raise FileNotFoundError(f"리포트 파일 경로를 찾을 수 없습니다: {report_path}")
@@ -192,7 +191,7 @@ if __name__ == '__main__':
             user_name = user_info.get("name", "user")
             conversation_memory = load_conversation_history(user_name)
 
-            bot = chatbot(
+            bot = IdeaReportChatbot(
                 report_path=report_file,
                 user_info=user_info,
                 structured_idea=structured_idea,
