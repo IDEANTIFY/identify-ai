@@ -1,7 +1,7 @@
 import os
 import glob
 import json
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 from datetime import datetime
 from dotenv import load_dotenv
 
@@ -9,22 +9,25 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.chains import LLMChain
 from langchain.memory import ConversationBufferMemory
-from langchain_core.messages import SystemMessage
+from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 
 class chatbot:
-    def __init__(self, report_path: str, user_info: Dict, structured_idea: Dict, openai_api_key: str):
+    # ✨ 변경: memory를 외부에서 주입받도록 __init__ 수정
+    def __init__(self, report_path: str, user_info: Dict, structured_idea: Dict, openai_api_key: str, memory: ConversationBufferMemory):
         if not os.path.exists(report_path):
             raise FileNotFoundError(f"리포트 파일 경로를 찾을 수 없습니다: {report_path}")
 
-        # 1. 컨텍스트 및 시스템 프롬프트 생성
+        # 1. 시스템 프롬프트 생성
         rag_context = self.create_context(report_path)
         system_prompt = self.create_system_prompt(rag_context, user_info, structured_idea)
         
         # 2. LangChain 구성요소 초기화
         llm = ChatOpenAI(model_name="gpt-5-nano", api_key=openai_api_key)
         
-        self.memory = ConversationBufferMemory(memory_key="history", return_messages=True)
-        self.memory.chat_memory.add_message(SystemMessage(content=system_prompt))
+        self.memory = memory
+        # 시스템 메시지는 메모리 로드 후 가장 처음에 추가
+        if not self.memory.chat_memory.messages:
+            self.memory.chat_memory.add_message(SystemMessage(content=system_prompt))
 
         prompt = ChatPromptTemplate.from_messages([
             MessagesPlaceholder(variable_name="history"),
@@ -35,6 +38,9 @@ class chatbot:
         self.chain = LLMChain(llm=llm, prompt=prompt, memory=self.memory)
 
         print(f"✅ {user_info.get('name', '사용자')}님을 위한 챗봇이 준비되었습니다.")
+        # ✨ 추가: 과거 대화 로드 여부 안내
+        if len(self.memory.chat_memory.messages) > 1:
+            print("💬 이전 대화 기록을 성공적으로 불러왔습니다.")
 
     def create_context(self, report_path: str) -> str:
         """리포트 파일에서 RAG 컨텍스트를 생성합니다."""
@@ -112,14 +118,53 @@ class chatbot:
         except Exception as e:
             print(f"⚠️ 대화 기록 저장 중 오류 발생: {e}")
 
-# --- 🚀 테스트 및 사용 예시 ---
-def find_latest_report() -> Optional[str]:
-    """가장 최근의 리포트 파일 경로를 찾습니다."""
-    script_dir = os.path.dirname(__file__)
-    reports_dir = os.path.join(script_dir, '..', 'dataset', 'reports')
-    report_files = glob.glob(os.path.join(reports_dir, 'report_total_*.json'))
-    return max(report_files, key=os.path.getctime) if report_files else None
+# --- 🚀 유틸리티 함수 ---
+def find_latest_file(directory: str, prefix: str) -> Optional[str]:
+    """주어진 디렉토리에서 특정 접두사를 가진 가장 최신 파일을 찾습니다."""
+    files = glob.glob(os.path.join(directory, f'{prefix}*.json'))
+    return max(files, key=os.path.getctime) if files else None
 
+def load_json_data(file_path: str) -> Optional[Dict]:
+    """JSON 파일을 로드하고 데이터를 반환합니다."""
+    if not file_path or not os.path.exists(file_path):
+        print(f"❌ 파일을 찾을 수 없습니다: {file_path}")
+        return None
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        print(f"❌ JSON 파싱 오류: {file_path}")
+        return None
+    except Exception as e:
+        print(f"파일 로드 중 오류 발생: {e}")
+        return None
+        
+# ✨ 추가: 과거 대화 기록을 로드하여 메모리 객체를 생성하는 함수
+def load_conversation_history(user_name: str) -> ConversationBufferMemory:
+    """사용자의 최신 대화 기록을 찾아 메모리에 로드합니다."""
+    memory = ConversationBufferMemory(memory_key="history", return_messages=True)
+    
+    script_dir = os.path.dirname(__file__)
+    history_dir = os.path.join(script_dir, '..', 'dataset', 'chat_histories')
+    
+    latest_history_file = find_latest_file(history_dir, f"history_{user_name}_")
+    
+    if latest_history_file:
+        with open(latest_history_file, 'r', encoding='utf-8') as f:
+            history_data = json.load(f)
+            
+        for message in history_data:
+            role = message.get("role")
+            content = message.get("content")
+            if role == "human":
+                memory.chat_memory.add_message(HumanMessage(content=content))
+            elif role == "ai":
+                memory.chat_memory.add_message(AIMessage(content=content))
+            # SystemMessage는 매번 새로 생성하므로 불러오지 않음
+    
+    return memory
+
+# --- 🚀 메인 실행 블록 ---
 if __name__ == '__main__':
     load_dotenv()
     
@@ -129,31 +174,30 @@ if __name__ == '__main__':
         exit()
 
     print("="*60)
-    print("🚀 챗봇 테스트를 시작합니다.")
+    print("🚀 챗봇 초기화를 시작합니다.")
     print("="*60)
 
-    sample_user_info = {
-        "name": "구준회",
-        "major": "AI빅데이터융합경영학과",
-        "interests": ["LLM 개발", "Persona LLM 개발"]
-    }
-    sample_structured_idea = {
-              "주요 내용": "AI 기반 식단 분석 및 맞춤형 레시피 추천 모바일 앱",
-              "도메인": "건강 및 피트니스, 푸드테크",
-              "목적": "개인 맞춤형 건강 관리 및 식습관 개선",
-              "차별성": "AI를 활용한 자동 식단 분석 및 정밀한 레시피 추천",
-              "핵심 기술": "인공지능(AI), 머신러닝, 이미지 인식(음식 사진 분석)",
-              "서비스 대상": "건강에 관심이 많은 사용자, 특정 식단이 필요한 환자"
-          }
+    script_dir = os.path.dirname(__file__)
+    dataset_dir = os.path.join(script_dir, '..', 'dataset')
     
-    report_file = find_latest_report()
-    if report_file:
+    user_info_file = os.path.join(dataset_dir, 'user_info.json')
+    structured_idea_file = os.path.join(dataset_dir, 'structured_idea.json')
+    report_file = find_latest_file(os.path.join(dataset_dir, 'reports'), 'report_total_')
+
+    user_info = load_json_data(user_info_file)
+    structured_idea = load_json_data(structured_idea_file)
+
+    if user_info and structured_idea and report_file:
         try:
+            user_name = user_info.get("name", "user")
+            conversation_memory = load_conversation_history(user_name)
+
             bot = chatbot(
                 report_path=report_file,
-                user_info=sample_user_info,
-                structured_idea=sample_structured_idea,
-                openai_api_key=openai_key
+                user_info=user_info,
+                structured_idea=structured_idea,
+                openai_api_key=openai_key,
+                memory=conversation_memory
             )
             print("\n안녕하세요! 아이디어에 대해 무엇이든 물어보세요.")
             print("종료하려면 'exit' 또는 'quit'을 입력하세요.\n")
@@ -161,7 +205,7 @@ if __name__ == '__main__':
             while True:
                 user_question = input("You: ")
                 if user_question.lower() in ['exit', 'quit']:
-                    bot.save_history(user_name=sample_user_info.get("name", "user"))
+                    bot.save_history(user_name=user_name)
                     print("챗봇을 종료합니다.")
                     break
                 
@@ -172,4 +216,4 @@ if __name__ == '__main__':
         except Exception as e:
             print(f"챗봇 실행 중 오류 발생: {e}")
     else:
-        print("❌ 테스트를 진행할 리포트 파일을 찾을 수 없습니다.")
+        print("❌ 챗봇 실행에 필요한 파일(사용자 정보, 아이디어, 리포트)을 모두 찾을 수 없습니다.")
