@@ -1,3 +1,5 @@
+## chat_idea_develop.py
+
 import os
 import glob
 import json
@@ -11,18 +13,24 @@ from langchain.chains import LLMChain
 from langchain.memory import ConversationBufferMemory
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 
+from utils.file_utils import load_json
+from utils.memory_manager import load_memory
+from utils.history_manager import save_history
+
+
 class IdeaDevelopChatbot:
-    def __init__(self, user_info: Dict, openai_api_key: str, memory: ConversationBufferMemory):
+    def __init__(self, user_info: Dict, openai_api_key: str, memory: ConversationBufferMemory = None):
         # 1. 시스템 프롬프트 생성
         system_prompt = self.create_system_prompt(user_info)
         
         # 2. LangChain 구성요소 초기화
         llm = ChatOpenAI(model_name="gpt-5-nano", api_key=openai_api_key)
         
-        self.memory = memory
         # 새 대화 시작 시, 시스템 프롬프트를 메모리의 가장 처음에 추가
-        if not self.memory.chat_memory.messages:
-            self.memory.chat_memory.add_message(SystemMessage(content=system_prompt))
+        self.memory = memory if memory else load_memory(
+            user_name=user_info.get("name", "user"),
+            system_prompt=system_prompt
+        )
 
         # 3. 대화 프롬프트 템플릿 정의
         prompt = ChatPromptTemplate.from_messages([
@@ -68,59 +76,7 @@ class IdeaDevelopChatbot:
 
     def save_history(self, user_name: str) -> None:
         """대화 기록을 사용자의 이름과 타임스탬프를 포함한 JSON 파일로 저장합니다."""
-        save_dir = os.path.join(os.path.dirname(__file__), '..', 'dataset', 'idea_dev_histories')
-        os.makedirs(save_dir, exist_ok=True)
-        
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        file_path = os.path.join(save_dir, f"history_{user_name}_{timestamp}.json")
-
-        history_to_save = [
-            {"role": msg.type, "content": msg.content}
-            for msg in self.memory.chat_memory.messages
-        ]
-
-        try:
-            with open(file_path, 'w', encoding='utf-8') as f:
-                json.dump(history_to_save, f, ensure_ascii=False, indent=4)
-            print(f"✅ 대화 기록이 안전하게 저장되었습니다: {file_path}")
-        except Exception as e:
-            print(f"⚠️ 대화 기록 저장 중 오류 발생: {e}")
-
-# --- 🚀 유틸리티 함수 ---
-def find_latest_file(directory: str, prefix: str) -> Optional[str]:
-    """디렉토리에서 특정 접두사를 가진 가장 최신 수정 파일을 찾습니다."""
-    files = glob.glob(os.path.join(directory, f'{prefix}*.json'))
-    return max(files, key=os.path.getctime) if files else None
-
-def load_json_data(file_path: str) -> Optional[Dict]:
-    """JSON 파일을 안전하게 로드합니다."""
-    if not file_path or not os.path.exists(file_path):
-        print(f"❌ 파일을 찾을 수 없습니다: {file_path}")
-        return None
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except Exception as e:
-        print(f"파일 로드 중 오류 발생: {e}")
-        return None
-        
-def load_conversation_history(user_name: str) -> ConversationBufferMemory:
-    """사용자의 최신 대화 기록을 찾아 LangChain 메모리 객체로 변환합니다."""
-    memory = ConversationBufferMemory(memory_key="history", return_messages=True)
-    history_dir = os.path.join(os.path.dirname(__file__), '..', 'dataset', 'idea_dev_histories')
-    
-    latest_history_file = find_latest_file(history_dir, f"history_{user_name}_")
-    
-    if latest_history_file:
-        history_data = load_json_data(latest_history_file)
-        if history_data:
-            for message in history_data:
-                role, content = message.get("role"), message.get("content")
-                if role == "human":
-                    memory.chat_memory.add_message(HumanMessage(content=content))
-                elif role == "ai":
-                    memory.chat_memory.add_message(AIMessage(content=content))
-    return memory
+        save_history(user_name, self.memory.chat_memory.messages)
 
 # --- 🚀 메인 실행 블록 ---
 if __name__ == '__main__':
@@ -136,23 +92,18 @@ if __name__ == '__main__':
     print("="*60)
 
     # 필수 파일 경로 설정
-    script_dir = os.path.dirname(__file__)
-    dataset_dir = os.path.join(script_dir, '..', 'dataset')
+    dataset_dir = os.path.join(os.path.dirname(__file__), '..', 'dataset')
     user_info_file = os.path.join(dataset_dir, 'user_info.json')
-
-    # 사용자 정보 로드
-    user_info = load_json_data(user_info_file)
+    user_info = load_json(user_info_file)
 
     if user_info:
         try:
             # 챗봇 세션 시작
             user_name = user_info.get("name", "user")
-            conversation_memory = load_conversation_history(user_name)
 
             bot = IdeaDevelopChatbot(
                 user_info=user_info,
                 openai_api_key=openai_key,
-                memory=conversation_memory
             )
             
             print("\n안녕하세요! 어떤 아이디어를 발전시켜 볼까요? 편하게 말씀해주세요.")
