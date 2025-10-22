@@ -9,16 +9,16 @@ from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
     
 # --- 0. 환경 설정 및 API 클라이언트 초기화 ---
-# API_KEY_STRING = os.environ.get("OPENAI_API_KEY_ahyun", "") 
+# API_KEY_STRING = os.environ.get("OPENAI_API_KEY_ahyun", "")
 API_KEY_STRING = os.getenv("OPENAI_API_KEY")
 # 파일 및 모델 경로
-MODEL_NAME = "gpt-4o-mini" # "gpt-4o-500k-ko-5nano"
-PROJECT_ROOT_PATH = "/home/work/Team_AI/identify-ai" 
+MODEL_NAME = "gpt-5-nano" # "gpt-4o-500k-ko-5nano"
+PROJECT_ROOT_PATH = "/home/work/Team_AI/identify-ai"
 
 DB_CSV_FILE = os.path.join(PROJECT_ROOT_PATH, "dataset", "crawling_db.csv")
 ORIGINAL_CSV_FILE = DB_CSV_FILE 
 JSON_RULE_FILE = os.path.join(PROJECT_ROOT_PATH, "app_keyword", "category_rules.json")
-UNMAPPED_CSV_FILE = os.path.join(PROJECT_ROOT_PATH, "dataset", "unmapped_crawling.csv") 
+UNMAPPED_CSV_FILE = os.path.join(PROJECT_ROOT_PATH, "dataset", "unmapped_crawling.csv")
 TEXT_COLUMN_NAMES = ['title', 'content', 'etc'] # GPT 입력에 사용할 컬럼 목록
 
 # OpenAI 클라이언트 초기화 (API 키는 환경 변수에서 로드됨)
