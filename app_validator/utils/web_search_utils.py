@@ -40,8 +40,8 @@ TAVILY_INCLUDE_DOMAINS = None   # 특정 도메인만 포함 (리스트)
 TAVILY_EXCLUDE_DOMAINS = None   # 특정 도메인 제외 (리스트)
 
 # 임베딩 모델 설정
-EMBEDDING_MODEL_NAME = "jhgan/ko-sroberta-multitask"   # 한국어/다국어 지원 모델
-EMBEDDING_BATCH_SIZE = 128                             # 배치 크기
+EMBEDDING_MODEL_NAME = "jhgan/ko-sroberta-multitask" 
+EMBEDDING_BATCH_SIZE = 128                             
 CROSS_ENCODER_MODEL_NAME = "cross-encoder/ms-marco-MiniLM-L-6-v2"  # Cross-Encoder 모델 -> 리랭크를 위한..
 
 # 전처리
@@ -242,10 +242,15 @@ def rerank_results(df: pd.DataFrame, query: str, duplicate_threshold: float = 0.
     pairs = [[query, t] for t in df.loc[:top_k - 1, "content"].fillna("").tolist()]
     if pairs:
         cross_scores = cross_encoder.predict(pairs)
-        df.loc[:top_k - 1, "cross_score"] = cross_scores
-        df_top = df.iloc[:top_k].sort_values("cross_score", ascending=False)
+        scaled_scores = torch.sigmoid(torch.tensor(cross_scores)).numpy() * 100
+        df.loc[:top_k - 1, "score"] = scaled_scores
+
+        df_top = df.iloc[:top_k].sort_values("score", ascending=False)
         df_rest = df.iloc[top_k:]
         df = pd.concat([df_top, df_rest], ignore_index=True)
+
+    if "bi_score" in df.columns:
+        df = df.drop(columns=["bi_score"])
 
     return df
 
@@ -264,3 +269,7 @@ def run_web_search_pipeline(query: str, top_k: int = None) -> pd.DataFrame:
 
 ## 사용법
 ## run_web_search_pipeline(query, 15)
+if __name__ == "__main__":
+    result = run_web_search_pipeline("ChatGPT 5", 5)
+    result.to_csv("search_results.csv", index=False, encoding="utf-8-sig")
+    print(result['score'].unique())
