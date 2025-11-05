@@ -1,8 +1,11 @@
 import os
 import re
 import requests
+import json
 import pandas as pd
-
+from dotenv import load_dotenv
+from dotenv import load_dotenv
+load_dotenv()
 
 SERPER_API_KEY = os.environ.get("SERPER_API_KEY", "")
 SERPER_URL = "https://google.serper.dev/news"
@@ -15,7 +18,6 @@ def search_news(keywords, country="kr", num=10):
     - 공백으로 키워드를 연결하여 AND 검색 수행
     - 매칭된 키워드를 별도 컬럼에 표시
     """
-    # 입력이 문자열이면 리스트로 변환
     if isinstance(keywords, str):
         keywords = [kw.strip() for kw in keywords.split(",") if kw.strip()]
 
@@ -53,11 +55,18 @@ def search_news(keywords, country="kr", num=10):
         print(f"검색 실패: {e}")
 
     if not rows:
-        return pd.DataFrame(columns=["title", "link", "source", "date", "image", "snippet", "matched_keywords"])
-    return pd.DataFrame(rows).drop_duplicates(subset=["link"]).reset_index(drop=True)
+        df = pd.DataFrame(columns=["title", "link", "source", "date", "image", "snippet", "matched_keywords"])
+        return df.to_json(orient="records", force_ascii=False, indent=2)
+    df = pd.DataFrame(rows).drop_duplicates(subset=["link"]).reset_index(drop=True)
+    return df.to_json(orient="records", force_ascii=False, indent=2)
 
 
-## 사용 예시
-## AND 검색: 웹서비스 AND 대학생 AND 아이디어
-## df = search_news("웹서비스, 대학생, 아이디어", num=20)
-## print(df.head())
+
+if __name__ == "__main__":
+    ## user_info에 있는 키워드를 입력으로 넣어야 함!
+    issue_news_search = search_news("웹서비스, 대학생, 아이디어")
+    output_path = "issue_news_search.json"
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(issue_news_search)
+
+    print(f"JSON 파일 생성 완료: {output_path}")
