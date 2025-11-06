@@ -15,12 +15,24 @@ fastapi
 uvicorn[standard]
 pydantic
 
-# Data Handling & Utilities
-pandas
-python-dotenv
-
-# LangChain & Extensions
-langchain-tavily
-langchain_community
+langchain==0.3.27
+langchain-core==0.3.79
+langchain-community==0.3.31
 langchain_naver_community
-langchain_openai
+langchain-openai==0.3.35
+langchain-tavily==0.2.12
+langchain-text-splitters==0.3.11
+
+langgraph==1.0.1
+langgraph-checkpoint==3.0.0
+langgraph-prebuilt==1.0.1
+langgraph-sdk==0.2.9
+
+openai==2.6.1
+tiktoken==0.12.0
+python-dotenv==1.1.1
+pandas
+
+faiss-gpu==1.7.2
+
+dotenv
