@@ -9,7 +9,7 @@ from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from langchain.prompts import ChatPromptTemplate
 from langgraph.graph import StateGraph, END
 
-from utils.file_utils import load_json
+from utils.file_utils import load_user_info
 from utils.memory_manager import load_memory
 from utils.history_manager import save_history as save_history_json
 from utils.relevance_utils import check_relevance
@@ -52,18 +52,25 @@ class GeneralChatbot:
     '''
     일반 대화형 챗봇 클래스
     '''
-    def __init__(self, user_info: Dict, openai_api_key: str):
+    def __init__(self, user_id: str, chat_id: str, openai_api_key: str):
         '''
         챗봇 초기화 함수
         '''
-        self.user_info = user_info
-        self.user_name = user_info.get("name", "user")
+        self.user_id = user_id
+        self.chat_id = chat_id
+        self.user_info = load_user_info(user_id) or {}
+        self.user_name = self.user_info.get("name", "user")
         self.llm = ChatOpenAI(model_name="gpt-5-nano", api_key=openai_api_key)
-        self.memory = load_memory(self.user_name, system_prompt="당신은 아이디어 일반 멘토입니다.")
+        self.memory = load_memory(
+            user_id=self.user_id,
+            chat_id=self.chat_id,
+            system_prompt=f"당신은 아이디어 멘토입니다. 사용자 이름은 {self.user_name}입니다."
+        )
         self.web = WebSearch()
         self.db = self._init_db()
         self.graph = self._build_graph()
-        print(f"General Chatbot ready: {self.user_name}")
+        print(f"General Chatbot ready: {self.user_name} ({self.user_id}, chat:{self.chat_id})")
+
 
     def _init_db(self) -> Optional[DBSearch]:
         '''
@@ -247,7 +254,7 @@ class GeneralChatbot:
         '''
         대화 기록 저장 함수
         '''
-        save_history_json(self.user_name, self.memory.chat_memory.messages)
+        save_history_json(self.user_id, self.chat_id, self.memory.chat_memory.messages)
 
 
 if __name__ == "__main__":
@@ -256,13 +263,14 @@ if __name__ == "__main__":
     if not key:
         print("OPENAI_API_KEY 미설정")
         raise SystemExit(1)
+    user_id = "A000"
+    chat_id = "0000"
 
-    user_info = load_json(os.path.join(os.path.dirname(__file__), "..", "dataset", "user_info.json"))
-    if not user_info:
-        print("user_info.json 없음")
-        raise SystemExit(1)
-
-    bot = GeneralChatbot(user_info=user_info, openai_api_key=key)
+    bot = GeneralChatbot(
+        user_id=user_id,
+        chat_id=chat_id,
+        openai_api_key=key
+    )
     print("\n안녕하세요! 아이디어에 대해 무엇이든 물어보세요.")
     print("종료하려면 'exit' 또는 'quit'을 입력하세요.\n")
 
