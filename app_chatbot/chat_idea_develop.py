@@ -1,10 +1,7 @@
 ## chat_idea_develop.py
 
 import os
-import glob
-import json
 from typing import Dict, Optional
-from datetime import datetime
 from dotenv import load_dotenv
 
 from langchain_openai import ChatOpenAI
@@ -13,35 +10,46 @@ from langchain.chains import LLMChain
 from langchain.memory import ConversationBufferMemory
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 
-from utils.file_utils import load_json
+from utils.file_utils import load_user_info
 from utils.memory_manager import load_memory
-from utils.history_manager import save_history
+from utils.history_manager import save_history as save_history_json
+from utils.title_manager import create_chat_title_if_first
 
 
 class IdeaDevelopChatbot:
-    def __init__(self, user_info: Dict, openai_api_key: str, memory: ConversationBufferMemory = None):
+    def __init__(self, user_id: str, chat_id: str, openai_api_key: str):
+        '''
+        챗봇 초기화 함수
+        '''
+        self.user_id = user_id
+        self.chat_id = chat_id
+        self.openai_api_key = openai_api_key  # 추가
+        self.user_info = load_user_info(user_id) or {}
+        self.user_name = self.user_info.get("name", "user")
+        
         # 1. 시스템 프롬프트 생성
-        system_prompt = self.create_system_prompt(user_info)
+        system_prompt = self.create_system_prompt(self.user_info)
         
         # 2. LangChain 구성요소 초기화
-        llm = ChatOpenAI(model_name="gpt-5-nano", api_key=openai_api_key)
+        self.llm = ChatOpenAI(model_name="gpt-5-nano", api_key=openai_api_key)
         
-        # 새 대화 시작 시, 시스템 프롬프트를 메모리의 가장 처음에 추가
-        self.memory = memory if memory else load_memory(
-            user_name=user_info.get("name", "user"),
+        # 3. 메모리 로드 (user_id, chat_id 기반)
+        self.memory = load_memory(
+            user_id=self.user_id,
+            chat_id=self.chat_id,
             system_prompt=system_prompt
         )
 
-        # 3. 대화 프롬프트 템플릿 정의
+        # 4. 대화 프롬프트 템플릿 정의
         prompt = ChatPromptTemplate.from_messages([
             MessagesPlaceholder(variable_name="history"), # 대화 기록
             ("human", "{user_input}"),                   # 사용자 입력
         ])
 
-        # 4. LLMChain 생성
-        self.chain = LLMChain(llm=llm, prompt=prompt, memory=self.memory)
+        # 5. LLMChain 생성
+        self.chain = LLMChain(llm=self.llm, prompt=prompt, memory=self.memory)
 
-        print(f"✅ {user_info.get('name', '사용자')}님을 위한 '아이디어 디벨롭 챗봇'이 준비되었습니다.")
+        print(f"✅ {self.user_name}님을 위한 '아이디어 디벨롭 챗봇'이 준비되었습니다. ({self.user_id}, chat:{self.chat_id})")
         if len(self.memory.chat_memory.messages) > 1:
             print("💬 이전 대화 기록을 성공적으로 불러왔습니다. 하던 이야기를 계속 이어가세요.")
 
@@ -58,6 +66,9 @@ class IdeaDevelopChatbot:
 3.  **구체화 (Solidify):** "만약 이 서비스를 한 문장으로 설명한다면?", "가장 중요한 기능 3가지는 무엇일까요?" 등 실행 가능한 질문으로 아이디어를 명확하게 만듭니다.
 4.  **격려 (Encourage):** 항상 긍정적이고 격려하는 태도를 유지하며, 사용자가 자신감을 갖고 아이디어를 발전시킬 수 있는 안전한 환경을 제공합니다.
 
+**답변 스타일:**
+- 답변은 간결하고 핵심만 전달하세요. 불필요하게 길게 설명하지 마세요.
+
 ---
 ### 멘토링 대상 사용자 정보
 {user_info_str}
@@ -70,58 +81,57 @@ class IdeaDevelopChatbot:
         """사용자 입력에 대한 챗봇의 응답을 생성하고 반환합니다."""
         try:
             response = self.chain.invoke({"user_input": user_input})
-            return response.get('text', "오류: 응답 텍스트를 찾을 수 없습니다.")
+            ans = response.get('text', "오류: 응답 텍스트를 찾을 수 없습니다.")
         except Exception as e:
-            return f"API 호출 중 오류가 발생했습니다: {e}"
+            ans = f"API 호출 중 오류가 발생했습니다: {e}"
+        
+        # 첫 대화인 경우 제목 생성
+        from utils.title_manager import is_first_chat
+        if is_first_chat(self.user_id, self.chat_id):
+            create_chat_title_if_first(
+                user_id=self.user_id,
+                chat_id=self.chat_id,
+                first_user_input=user_input,
+                first_ai_response=ans,
+                openai_api_key=self.openai_api_key
+            )
+        
+        return ans
 
-    def save_history(self, user_name: str) -> None:
-        """대화 기록을 사용자의 이름과 타임스탬프를 포함한 JSON 파일로 저장합니다."""
-        save_history(user_name, self.memory.chat_memory.messages)
+    def save_history(self):
+        """대화 기록 저장 함수"""
+        save_history_json(self.user_id, self.chat_id, self.memory.chat_memory.messages)
+
 
 # --- 🚀 메인 실행 블록 ---
 if __name__ == '__main__':
     load_dotenv()
     
-    openai_key = os.getenv("OPENAI_API_KEY")
-    if not openai_key:
-        print("❌ OPENAI_API_KEY 환경변수가 설정되지 않았습니다. .env 파일을 확인해주세요.")
-        exit()
+    key = os.getenv("OPENAI_API_KEY")
+    if not key:
+        print("OPENAI_API_KEY 미설정")
+        raise SystemExit(1)
+    
+    user_id = "A000"
+    chat_id = "0000"
 
-    print("="*60)
-    print("🚀 아이디어 디벨롭 챗봇을 시작합니다.")
-    print("="*60)
+    bot = IdeaDevelopChatbot(
+        user_id=user_id,
+        chat_id=chat_id,
+        openai_api_key=key
+    )
+    
+    print("\n안녕하세요! 어떤 아이디어를 발전시켜 볼까요? 편하게 말씀해주세요.")
+    print("대화를 종료하려면 'exit' 또는 'quit'을 입력하세요.\n")
 
-    # 필수 파일 경로 설정
-    dataset_dir = os.path.join(os.path.dirname(__file__), '..', 'dataset')
-    user_info_file = os.path.join(dataset_dir, 'user_info.json')
-    user_info = load_json(user_info_file)
-
-    if user_info:
-        try:
-            # 챗봇 세션 시작
-            user_name = user_info.get("name", "user")
-
-            bot = IdeaDevelopChatbot(
-                user_info=user_info,
-                openai_api_key=openai_key,
-            )
-            
-            print("\n안녕하세요! 어떤 아이디어를 발전시켜 볼까요? 편하게 말씀해주세요.")
-            print("대화를 종료하려면 'exit' 또는 'quit'을 입력하세요.\n")
-
-            # 대화 루프
-            while True:
-                user_question = input("You: ")
-                if user_question.lower() in ['exit', 'quit']:
-                    bot.save_history(user_name=user_name)
-                    print("\n이용해주셔서 감사합니다. 멘토와의 대화는 언제든 다시 이어갈 수 있습니다.")
-                    break
-                
-                print("\nMentor: 생각 중...", end="", flush=True)
-                response = bot.chat(user_question)
-                print(f"\rMentor: {response}\n")
-
-        except Exception as e:
-            print(f"챗봇 실행 중 예측하지 못한 오류가 발생했습니다: {e}")
-    else:
-        print("❌ 챗봇 실행에 필요한 사용자 정보 파일(`dataset/user_info.json`)을 찾을 수 없습니다.")
+    # 대화 루프
+    while True:
+        user_question = input("You: ")
+        if user_question.lower() in ['exit', 'quit']:
+            bot.save_history()
+            print("\n이용해주셔서 감사합니다. 멘토와의 대화는 언제든 다시 이어갈 수 있습니다.")
+            break
+        
+        print("Bot: 생각 중...", end="", flush=True)
+        response = bot.chat(user_question)
+        print(f"\rBot: {response}\n")

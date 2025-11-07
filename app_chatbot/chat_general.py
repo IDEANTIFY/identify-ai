@@ -15,6 +15,8 @@ from utils.history_manager import save_history as save_history_json
 from utils.relevance_utils import check_relevance
 from utils.db_search_utils import DBSearch
 from utils.web_search_utils import WebSearch
+from utils.title_manager import create_chat_title_if_first
+import concurrent.futures
 
 Intent = Literal["IDEA_DEV", "REPORT_Q", "SITE_DATA_Q", "GENERAL", "SMALL_TALK"]
 
@@ -42,7 +44,8 @@ BASE_SYS = """너는 사용자의 아이디어 생성 · 발전 · 검증을 도
 - 먼저 사용자의 의도를 이해하고 필요한 경우 질문을 통해 맥락을 확인한다.
 - 아이디어 관련 요청이 명확하지 않다면 목적을 먼저 질문한다.
 - 답변은 명확하고 직관적으로 작성한다.
-- 아이디어 관련 대화가 아닌 경우에도 자연스럽게 응답한다."""
+- 아이디어 관련 대화가 아닌 경우에도 자연스럽게 응답한다.
+- **중요: 답변은 간결하고 핵심만 전달하세요. 불필요하게 길게 설명하지 마세요.**"""
 
 REPORT_GUIDE = "기존에 생성하신 아이디어 검증 리포트에 관한 질문은 아래 ‘아이디어 검증 리포트 불러오기’ 버튼을 눌러 해당 리포트를 불러오시면 더 자세한 답변을 드릴 수 있어요!"
 DEV_TAIL = "\n\n더 자세한 아이디어 디벨롭을 원하신다면 아래 ‘아이디어 디벨롭’ 버튼을 눌러보세요!"
@@ -58,6 +61,7 @@ class GeneralChatbot:
         '''
         self.user_id = user_id
         self.chat_id = chat_id
+        self.openai_api_key = openai_api_key  # 추가
         self.user_info = load_user_info(user_id) or {}
         self.user_name = self.user_info.get("name", "user")
         self.llm = ChatOpenAI(model_name="gpt-5-nano", api_key=openai_api_key)
@@ -152,23 +156,47 @@ class GeneralChatbot:
 
     def _node_draft(self, s: GraphState) -> GraphState:
         '''
-        초안 응답 생성 노드
+        초안 응답 생성 노드 (병렬 검색 최적화)
         '''
         msgs = s["messages"]
         qmsg = next((m for m in reversed(msgs) if isinstance(m, HumanMessage)), None)
         q = qmsg.content if qmsg else ""
         ctx: List[str] = []
-        if s.get("need_db") and self.db:
-            try:
-                hits = self.db.search(q, top_k=5)
-                if hits:
-                    ctx.append("[DB]\n" + "\n---\n".join(hits))
-            except Exception:
-                pass
-        if s.get("need_web"):
-            hits = self.web.search(q, top_k=5)
-            if hits:
-                ctx.append("[WEB]\n" + "\n---\n".join(hits))
+        
+        # DB 검색과 웹 검색을 병렬로 실행
+        db_hits = []
+        web_hits = []
+        
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+            # DB 검색 (필요한 경우)
+            if s.get("need_db") and self.db:
+                db_future = executor.submit(self._search_db, q)
+            else:
+                db_future = None
+            
+            # 웹 검색 (필요한 경우)
+            if s.get("need_web"):
+                web_future = executor.submit(self.web.search, q, 5)
+            else:
+                web_future = None
+            
+            # 결과 수집
+            if db_future:
+                try:
+                    db_hits = db_future.result(timeout=3.0)  # 타임아웃 3초
+                    if db_hits:
+                        ctx.append("[DB]\n" + "\n---\n".join(db_hits))
+                except Exception as e:
+                    print(f"DB 검색 실패: {e}")
+            
+            if web_future:
+                try:
+                    web_hits = web_future.result(timeout=5.0)  # 타임아웃 5초
+                    if web_hits:
+                        ctx.append("[WEB]\n" + "\n---\n".join(web_hits))
+                except Exception as e:
+                    print(f"웹 검색 실패: {e}")
+        
         u = self.user_info
         if u:
             ctx.insert(
@@ -183,6 +211,13 @@ class GeneralChatbot:
             text += DEV_TAIL
         s["answer"] = text
         return s
+    
+    def _search_db(self, query: str) -> List[str]:
+        '''DB 검색 헬퍼 메서드'''
+        try:
+            return self.db.search(query, top_k=5)
+        except Exception:
+            return []
 
     def _node_relevance(self, s: GraphState) -> GraphState:
         '''
@@ -248,6 +283,18 @@ class GeneralChatbot:
             ans = out.get("answer") or "도움이 될 만한 답변을 찾지 못했어요."
         # 응답 저장
         self.memory.chat_memory.add_message(AIMessage(content=ans))
+        
+        # 첫 대화인 경우 제목 생성
+        from utils.title_manager import is_first_chat
+        if is_first_chat(self.user_id, self.chat_id):
+            create_chat_title_if_first(
+                user_id=self.user_id,
+                chat_id=self.chat_id,
+                first_user_input=user_input,
+                first_ai_response=ans,
+                openai_api_key=self.openai_api_key
+            )
+        
         return ans
 
     def save_history(self):
