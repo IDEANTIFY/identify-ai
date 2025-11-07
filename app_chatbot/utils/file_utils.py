@@ -6,7 +6,6 @@ import json
 from typing import Optional, Dict, Any
 
 
-# 기본 데이터셋 폴더들 (프로젝트 구조에 맞춰 조정 가능)
 ROOT_DATASET_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "dataset")
 USER_INFO_DIR = os.path.join(ROOT_DATASET_DIR, "user_info")
 CHAT_HISTORY_DIR = os.path.join(ROOT_DATASET_DIR, "chat_histories")
