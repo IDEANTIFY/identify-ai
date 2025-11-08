@@ -9,7 +9,6 @@ from .file_utils import save_json, load_json, chat_history_path
 
 MAX_TURNS = 10   # <-- message가 아니라 턴 기준 (인간 + ai 가 한 턴)
 
-
 def save_history(user_id: str, chat_id: str, messages: List[BaseMessage]) -> Optional[str]:
     """
     메시지를 턴 단위(human + ai)로 저장
