@@ -1,0 +1,173 @@
+{
+    "summary_report": {
+        "report_summary": {
+            "total_similar_cases": 8,
+            "evaluation_scores": {
+                "similarity": 85,
+                "creativity": 40,
+                "feasibility": 60
+            },
+            "analysis_narrative": "본 아이디어는 인공지능 기반 이미지 분석으로 식단을 추정하고 개인의 건강 목표에 따라 맞춤형 레시피를 자동 제안하는 모바일 앱이라는 점에서 현 시장의 핵심 흐름과 상당 부분 중복됩니다. 웹상의 Vision AI 기반 식단 관리나 Meal Lens 등의 사례, 그리고 크롤링/유저 DB의 맞춤 메뉴 추천 시스템이 이미 유사 기능을 제공하고 있어 전체 유사 건수는 높게 평가됩니다. 다만 차별점은 단순한 식단 제안이 아니라 건강 목표별 정밀 분석, 특정 질환이나 식단 필요성에 대한 구체적 대응, 그리고 사용자의 식단 관리 흐름을 하나의 플랫폼으로 통합하는 점에 있습니다. 기술적으로는 이미지 인식과 개인화 추천 알고리즘이 이미 성숙단계에 있어 MVP 수준의 구현은 가능하나, 정확한 영양 추정의 신뢰도, 데이터 편향 및 프라이버시 이슈, 식품 안전 데이터와의 정합성, 레시피 저작권 관리 등이 주요 리스크로 작용합니다. 시장 수요 측면에서는 건강 관심층과 특정 식단이 필요한 환자라는 이중 타깃이 존재하지만, 경쟁이 치열하므로 초기에는 MVP의 핵심 기능인 이미지 분석 정확도, 추천 만족도, UX 친밀감에 집중하고 데이터 수집 파이프라인과 파트너십 구축으로 신뢰를 확보하는 것이 중요합니다. 또한 실현 가능성은 기술 성숙도와 데이터 인프라 구축 여부에 크게 좌우되므로, 데이터 수집 계획과 규정 준수 체계를 먼저 마련하는 것이 바람직합니다."
+        }
+    },
+    "detailed_report": {
+        "query": {
+            "주요 내용": "AI 기반 식단 분석 및 맞춤형 레시피 추천 모바일 앱",
+            "도메인": "건강 및 피트니스, 푸드테크",
+            "목적": "개인 맞춤형 건강 관리 및 식습관 개선",
+            "차별성": "AI를 활용한 자동 식단 분석 및 정밀한 레시피 추천",
+            "핵심 기술": "인공지능(AI), 머신러닝, 이미지 인식(음식 사진 분석)",
+            "서비스 대상": "건강에 관심이 많은 사용자, 특정 식단이 필요한 환자"
+        },
+        "detailed_results": [
+            {
+                "source_type": "web",
+                "title": "Vision AI 기반 식단관리: 이미지 분석 AI를 통해 실현하는 사용자 ...",
+                "summary": "Vision AI를 활용해 음식 이미지를 식별하고 영양 정보를 분석하며, 개인 맞춤형 식단 관리 서비스를 제공하는 시나리오를 소개합니다. 정교한 컴퓨터 비전 모델과 영양 정보 전달, 개인화된 식단 추천이 주된 기능으로 제시됩니다.",
+                "link": "https://kr.rebellions.ai/vision-ai-%EA%B8%B0%EB%B0%98-%EC%8B%9D%EB%8B%A8%EA%B4%80%EB%A6%AC-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EB%B6%84%EC%84%9D-ai%EB%A5%BC-%ED%86%B5%ED%95%B4-%EC%8B%A4%ED%98%84%ED%95%98%EB%8A%94-%EC%82%AC%EC%9A%A9/",
+                "score": 0.9996387958526611,
+                "insight": "<기존 아이디어> 이미지 기반 음식 인식과 영양 분석, 개인 맞춤식 식단 추천 중심의 AI 기반 다이어트 관리 서비스. <내 아이디어> 모바일 앱에서 자동 식단 분석과 정밀한 레시피 추천을 넘어, 건강 상태와 식습관 데이터를 종합한 피드백 루프를 구축하고, 프라이버시를 고려한 엣지 컴퓨팅/헬스케어 연계 모델로 차별화할 수 있습니다. (Keyword: N/A, Team Members: N/A, Link: https://kr.rebellions.ai/vision-ai-%EA%B8%B0%EB%B0%98-%EC%8B%9D%EB%8B%A8%EA%B4%80%EB%A6%AC-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EB%B6%84%EC%84%9D-ai%EB%A5%BC-%ED%86%B5%ED%95%B4-%EC%8B%A4%ED%98%84%ED%95%98%EB%8A%94-%EC%82%AC%EC%9A%A9/, Source: N/A)"
+            },
+            {
+                "source_type": "web",
+                "title": "식사진: 한국 음식 AI 분석 - Google Play 앱",
+                "summary": "구글 플레이에 등록된 모바일 앱으로 한국 음식을 AI가 분석하고 영양 정보를 제공하는 기능을 소개합니다. 이미지 인식 기반의 식단 파악이 가능하며 데이터 보안 등 앱 정보가 나와 있습니다.",
+                "link": "https://play.google.com/store/apps/details?id=com.hoodpub.meal_lens&hl=ko",
+                "score": 0.9996323585510254,
+                "insight": "<기존 아이디어> 음식 사진으로 식단 정보를 파악하고 영양 정보를 제공하는 소비자용 앱. <내 아이디어> 이를 바탕으로 레시피 추천과 식단 계획 기능을 강화하고, 특정 질환이나 다이어트 목표에 맞춘 자동 제안 엔진 및 건강 지표 트래킹을 제공하는 차별화가 가능합니다. 또한 프라이버시 중심의 데이터 처리와 오프라인 기능을 고려할 수 있습니다. (Keyword: N/A, Team Members: N/A, Link: https://play.google.com/store/apps/details?id=com.hoodpub.meal_lens&hl=ko, Source: N/A)"
+            },
+            {
+                "source_type": "web",
+                "title": "푸드테크와 AI 셰프의 시대 - cat-dd 님의 블로그",
+                "summary": "AI 셰프의 장점은 사용 가능한 재료를 기반으로 실질적인 요리 추천이 가능하다는 점이며, 스마트 냉장고 등의 센서를 통해 재료를 파악하고 맞춤형 레시피를 제안합니다. 식재료 낭비를 줄이고 개인화된 식단 설계를 가능하게 합니다.",
+                "link": "https://cat-dd.kr/22",
+                "score": 0.9995930790901184,
+                "insight": "<기존 아이디어> 이미지 분석과 맞춤 레시피 제안을 포함한 AI 셰프 시대의 비전. <내 아이디어> 재료 기반 추천과 식재료 관리, 알레르기/기호 반영 등으로 개인화 고도화를 시도하고, 스마트 홈 연계(스마트 냉장고, 건강 트래킹)으로 가치 창출을 강화할 수 있습니다. (Keyword: IoT, 스마트 주방, AI 셰프, Team Members: N/A, Link: https://cat-dd.kr/22, Source: N/A)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "(미식큐) AI기반 음식취향분석 맞춤 메뉴 추천 서비스 ① AI기반 식습관 및 음식 취향 분석 ② 개인화 상품 추천 및 맞춤 식단 자동 생성",
+                "summary": "AI를 활용한 식습관 분석과 취향 기반 맞춤 메뉴 추천, 맞춤 식단 자동 생성 기능을 제공하는 서비스 사례를 소개합니다.",
+                "link": "https://www.data.go.kr/suc/awardWinning.do",
+                "score": 0.750153660774231,
+                "insight": "<기존 아이디어> 식습관 분석 및 맞춤 메뉴 자동 생성 중심의 B2C 서비스. <내 아이디어> 건강 관리와 함께 재료 추천/구매 연계까지 확장 가능하며, 구독형 모델이나 파트너십 기반의 B2B2C 확장을 고려할 수 있습니다. (Keyword: 식품 안전/바이오, Team Members: 팜킷, Link: https://www.data.go.kr/suc/awardWinning.do, Source: 외부)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "AI 기반 개인 맞춤형 영양 관리 플랫폼",
+                "summary": "사용자의 건강 상태, 식습관, 활동량을 분석하여 AI가 맞춤형 영양 계획을 제공하는 모바일 애플리케이션. 음식 사진을 촬영하면 자동으로 영양 성분을 분석하고, 개인의 건강 목표에 맞는 식단을 추천합니다.",
+                "link": "/project/user_001",
+                "score": 0.8210372924804688,
+                "insight": "<기존 아이디어> 건강 상태·활동 기반의 개인 맞춤 영양 관리. <내 아이디어> 이미지 분석과 영양 리포트, 실시간 피드백 루프를 통해 식단 제안을 더 세분화하고, 다기관 협업 및 데이터 공유 정책을 설계하는 것이 가치 있습니다. (Keyword: AI, 영양 관리, 건강 관리, 모바일 앱, Team Members: 김철수, 이영희, 박민수, Link: /project/user_001, Source: Iideantify 유저)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "스마트 팜 IoT 기반 유기농 작물 재배 솔루션",
+                "summary": "IoT 센서와 AI를 이용해 작물 재배 환경을 모니터링하고 최적 조건으로 자동 제어하여 유기농 품질과 수확량을 향상시키는 솔루션",
+                "link": "/project/user_004",
+                "score": 0.5986756086349487,
+                "insight": "<기존 아이디어> 농업용 IoT+AI의 생산성 중심 사례. <내 아이디어> 식품 공급망의 일부로서 원재료의 품질/안전성 예측, 재고 관리 및 낭비 감소에 활용 가능하며, 가정용/소비자용 앱과의 연계로 직관적인 식재료 추천에 응용할 수 있습니다. (Keyword: IoT, 스마트팜, 유기농, AI, 농업, Team Members: 류성민, 배진호, 신혜원, Link: /project/user_004, Source: Iideantify 유저)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "실시간 식품 안전성 검증 블록체인 플랫폼",
+                "summary": "블록체인 기술을 활용하여 식품의 생산부터 소비까지 전 과정을 추적하고, 안전성 정보를 투명하게 공개하는 플랫폼.",
+                "link": "/project/user_002",
+                "score": 0.4794731140136719,
+                "insight": "<기존 아이디어> 식품 안전과 공급망 투명성에 중점을 둔 블록체인 활용 사례. <내 아이디어> 레시피 제안에 앞서 재료의 신뢰성과 원산지 정보를 확보하는 확장 모델로 활용 가능하며, 소비자 신뢰를 높일 수 있습니다. (Keyword: 식품 안전, 블록체인, 공급망 추적, 투명성, Team Members: 정수진, 최동욱, Link: /project/user_002, Source: Iideantify 유저)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "AR 기반 가상 화장실 데모 및 쇼핑 서비스",
+                "summary": "AR 기술을 활용하여 공간 데모와 쇼핑 체험을 제공하는 사례로, 증강현실을 통한 가상 피처를 제시합니다.",
+                "link": "/project/user_008",
+                "score": 0.4566580355167389,
+                "insight": "<기존 아이디어> AR 활용 사례의 일반적 예시. <내 아이디어> 주방에서의 조리 가이드/레시피 오버레이로 확장하여 사용자의 이해도와 참여를 높이고, 재료의 시각화 및 알레르기 정보 표시를 구현할 수 있습니다. (Keyword: AR, 가상 데모, 인테리어, 쇼핑, Team Members: 박수빈, 최민석, 김나연, Link: /project/user_008, Source: Iideantify 유저)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "대학생을 위한 팀플 일정 관리 및 협업 도구",
+                "summary": "대학생들의 팀 프로젝트를 위한 일정 관리와 협업 도구로, 캘린더 연동과 일정 분석을 통한 최적 회의 시간 제안 등을 제공합니다.",
+                "link": "/project/user_003",
+                "score": 0.43089231848716736,
+                "insight": "<기존 아이디어> 일정 관리/협업 도구 중심의 팀 프로젝트 지원. <내 아이디어> 식단 분석과 레시피 추천을 팀 협업 시나리오에 맞춘 공유형 대시보드로 확장해, 가족/소모임 단위의 구성원 일정과 영양 목표를 동기화하는 협업 기능을 구상할 수 있습니다. (Keyword: 팀플, 일정 관리, 협업, 대학생, Team Members: 강미영, 윤태현, 한지우, 오서연, Link: /project/user_003, Source: Iideantify 유저)"
+            }
+        ],
+        "raw_report": {
+            "detailed_results": [
+                {
+                    "source_type": "web",
+                    "title": "Vision AI 기반 식단관리: 이미지 분석 AI를 통해 실현하는 사용자 ...",
+                    "summary": "Vision AI를 활용해 음식 이미지를 식별하고 영양 정보를 분석하며, 개인 맞춤형 식단 관리 서비스를 제공하는 시나리오를 소개합니다. 정교한 컴퓨터 비전 모델과 영양 정보 전달, 개인화된 식단 추천이 주된 기능으로 제시됩니다.",
+                    "link": "https://kr.rebellions.ai/vision-ai-%EA%B8%B0%EB%B0%98-%EC%8B%9D%EB%8B%A8%EA%B4%80%EB%A6%AC-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EB%B6%84%EC%84%9D-ai%EB%A5%BC-%ED%86%B5%ED%95%B4-%EC%8B%A4%ED%98%84%ED%95%98%EB%8A%94-%EC%82%AC%EC%9A%A9/",
+                    "score": 0.9996387958526611,
+                    "insight": "<기존 아이디어> 이미지 기반 음식 인식과 영양 분석, 개인 맞춤식 식단 추천 중심의 AI 기반 다이어트 관리 서비스. <내 아이디어> 모바일 앱에서 자동 식단 분석과 정밀한 레시피 추천을 넘어, 건강 상태와 식습관 데이터를 종합한 피드백 루프를 구축하고, 프라이버시를 고려한 엣지 컴퓨팅/헬스케어 연계 모델로 차별화할 수 있습니다. (Keyword: N/A, Team Members: N/A, Link: https://kr.rebellions.ai/vision-ai-%EA%B8%B0%EB%B0%98-%EC%8B%9D%EB%8B%A8%EA%B4%80%EB%A6%AC-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EB%B6%84%EC%84%9D-ai%EB%A5%BC-%ED%86%B5%ED%95%B4-%EC%8B%A4%ED%98%84%ED%95%98%EB%8A%94-%EC%82%AC%EC%9A%A9/, Source: N/A)"
+                },
+                {
+                    "source_type": "web",
+                    "title": "식사진: 한국 음식 AI 분석 - Google Play 앱",
+                    "summary": "구글 플레이에 등록된 모바일 앱으로 한국 음식을 AI가 분석하고 영양 정보를 제공하는 기능을 소개합니다. 이미지 인식 기반의 식단 파악이 가능하며 데이터 보안 등 앱 정보가 나와 있습니다.",
+                    "link": "https://play.google.com/store/apps/details?id=com.hoodpub.meal_lens&hl=ko",
+                    "score": 0.9996323585510254,
+                    "insight": "<기존 아이디어> 음식 사진으로 식단 정보를 파악하고 영양 정보를 제공하는 소비자용 앱. <내 아이디어> 이를 바탕으로 레시피 추천과 식단 계획 기능을 강화하고, 특정 질환이나 다이어트 목표에 맞춘 자동 제안 엔진 및 건강 지표 트래킹을 제공하는 차별화가 가능합니다. 또한 프라이버시 중심의 데이터 처리와 오프라인 기능을 고려할 수 있습니다. (Keyword: N/A, Team Members: N/A, Link: https://play.google.com/store/apps/details?id=com.hoodpub.meal_lens&hl=ko, Source: N/A)"
+                },
+                {
+                    "source_type": "web",
+                    "title": "푸드테크와 AI 셰프의 시대 - cat-dd 님의 블로그",
+                    "summary": "AI 셰프의 장점은 사용 가능한 재료를 기반으로 실질적인 요리 추천이 가능하다는 점이며, 스마트 냉장고 등의 센서를 통해 재료를 파악하고 맞춤형 레시피를 제안합니다. 식재료 낭비를 줄이고 개인화된 식단 설계를 가능하게 합니다.",
+                    "link": "https://cat-dd.kr/22",
+                    "score": 0.9995930790901184,
+                    "insight": "<기존 아이디어> 이미지 분석과 맞춤 레시피 제안을 포함한 AI 셰프 시대의 비전. <내 아이디어> 재료 기반 추천과 식재료 관리, 알레르기/기호 반영 등으로 개인화 고도화를 시도하고, 스마트 홈 연계(스마트 냉장고, 건강 트래킹)으로 가치 창출을 강화할 수 있습니다. (Keyword: IoT, 스마트 주방, AI 셰프, Team Members: N/A, Link: https://cat-dd.kr/22, Source: N/A)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "(미식큐) AI기반 음식취향분석 맞춤 메뉴 추천 서비스 ① AI기반 식습관 및 음식 취향 분석 ② 개인화 상품 추천 및 맞춤 식단 자동 생성",
+                    "summary": "AI를 활용한 식습관 분석과 취향 기반 맞춤 메뉴 추천, 맞춤 식단 자동 생성 기능을 제공하는 서비스 사례를 소개합니다.",
+                    "link": "https://www.data.go.kr/suc/awardWinning.do",
+                    "score": 0.750153660774231,
+                    "insight": "<기존 아이디어> 식습관 분석 및 맞춤 메뉴 자동 생성 중심의 B2C 서비스. <내 아이디어> 건강 관리와 함께 재료 추천/구매 연계까지 확장 가능하며, 구독형 모델이나 파트너십 기반의 B2B2C 확장을 고려할 수 있습니다. (Keyword: 식품 안전/바이오, Team Members: 팜킷, Link: https://www.data.go.kr/suc/awardWinning.do, Source: 외부)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "AI 기반 개인 맞춤형 영양 관리 플랫폼",
+                    "summary": "사용자의 건강 상태, 식습관, 활동량을 분석하여 AI가 맞춤형 영양 계획을 제공하는 모바일 애플리케이션. 음식 사진을 촬영하면 자동으로 영양 성분을 분석하고, 개인의 건강 목표에 맞는 식단을 추천합니다.",
+                    "link": "/project/user_001",
+                    "score": 0.8210372924804688,
+                    "insight": "<기존 아이디어> 건강 상태·활동 기반의 개인 맞춤 영양 관리. <내 아이디어> 이미지 분석과 영양 리포트, 실시간 피드백 루프를 통해 식단 제안을 더 세분화하고, 다기관 협업 및 데이터 공유 정책을 설계하는 것이 가치 있습니다. (Keyword: AI, 영양 관리, 건강 관리, 모바일 앱, Team Members: 김철수, 이영희, 박민수, Link: /project/user_001, Source: Iideantify 유저)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "스마트 팜 IoT 기반 유기농 작물 재배 솔루션",
+                    "summary": "IoT 센서와 AI를 이용해 작물 재배 환경을 모니터링하고 최적 조건으로 자동 제어하여 유기농 품질과 수확량을 향상시키는 솔루션",
+                    "link": "/project/user_004",
+                    "score": 0.5986756086349487,
+                    "insight": "<기존 아이디어> 농업용 IoT+AI의 생산성 중심 사례. <내 아이디어> 식품 공급망의 일부로서 원재료의 품질/안전성 예측, 재고 관리 및 낭비 감소에 활용 가능하며, 가정용/소비자용 앱과의 연계로 직관적인 식재료 추천에 응용할 수 있습니다. (Keyword: IoT, 스마트팜, 유기농, AI, 농업, Team Members: 류성민, 배진호, 신혜원, Link: /project/user_004, Source: Iideantify 유저)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "실시간 식품 안전성 검증 블록체인 플랫폼",
+                    "summary": "블록체인 기술을 활용하여 식품의 생산부터 소비까지 전 과정을 추적하고, 안전성 정보를 투명하게 공개하는 플랫폼.",
+                    "link": "/project/user_002",
+                    "score": 0.4794731140136719,
+                    "insight": "<기존 아이디어> 식품 안전과 공급망 투명성에 중점을 둔 블록체인 활용 사례. <내 아이디어> 레시피 제안에 앞서 재료의 신뢰성과 원산지 정보를 확보하는 확장 모델로 활용 가능하며, 소비자 신뢰를 높일 수 있습니다. (Keyword: 식품 안전, 블록체인, 공급망 추적, 투명성, Team Members: 정수진, 최동욱, Link: /project/user_002, Source: Iideantify 유저)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "AR 기반 가상 화장실 데모 및 쇼핑 서비스",
+                    "summary": "AR 기술을 활용하여 공간 데모와 쇼핑 체험을 제공하는 사례로, 증강현실을 통한 가상 피처를 제시합니다.",
+                    "link": "/project/user_008",
+                    "score": 0.4566580355167389,
+                    "insight": "<기존 아이디어> AR 활용 사례의 일반적 예시. <내 아이디어> 주방에서의 조리 가이드/레시피 오버레이로 확장하여 사용자의 이해도와 참여를 높이고, 재료의 시각화 및 알레르기 정보 표시를 구현할 수 있습니다. (Keyword: AR, 가상 데모, 인테리어, 쇼핑, Team Members: 박수빈, 최민석, 김나연, Link: /project/user_008, Source: Iideantify 유저)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "대학생을 위한 팀플 일정 관리 및 협업 도구",
+                    "summary": "대학생들의 팀 프로젝트를 위한 일정 관리와 협업 도구로, 캘린더 연동과 일정 분석을 통한 최적 회의 시간 제안 등을 제공합니다.",
+                    "link": "/project/user_003",
+                    "score": 0.43089231848716736,
+                    "insight": "<기존 아이디어> 일정 관리/협업 도구 중심의 팀 프로젝트 지원. <내 아이디어> 식단 분석과 레시피 추천을 팀 협업 시나리오에 맞춘 공유형 대시보드로 확장해, 가족/소모임 단위의 구성원 일정과 영양 목표를 동기화하는 협업 기능을 구상할 수 있습니다. (Keyword: 팀플, 일정 관리, 협업, 대학생, Team Members: 강미영, 윤태현, 한지우, 오서연, Link: /project/user_003, Source: Iideantify 유저)"
+                }
+            ]
+        }
+    }
+}
