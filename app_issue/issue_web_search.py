@@ -113,9 +113,9 @@ if __name__ == "__main__":
     # 뉴스 검색 수행
     issue_news_search = search_news(keywords)
     
-    # 현재 실행 파일 기준으로 프로젝트 루트의 dataset/user_info 폴더에 저장
+    # 현재 실행 파일 기준으로 프로젝트 루트의 dataset/issue 폴더에 저장
     project_root = Path(__file__).parent.parent
-    output_dir = project_root / "dataset" / "user_info"
+    output_dir = project_root / "dataset" / "issue"
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / f"issue_news_search_{user_id}.json"
     
