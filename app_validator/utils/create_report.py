@@ -18,20 +18,25 @@ def generate_summary_report(
     query: Dict[str, Any], 
     web_docs: List[Dict], 
     crawling_docs: List[Dict],   # 👈 외부 크롤링 (기존)
-    user_docs: List[Dict],   # 👈 user_docs(추가)
-    approx_similar_count: int
+    user_docs: List[Dict] = None,   # 👈 user_docs(추가) - 기본값 None
+    approx_similar_count: int = 0
 ) -> Dict[str, Any]:
     """
     아이디어를 정량적으로 평가하는 요약 보고서(JSON)를 생성합니다.
     """
+    # user_docs가 None이면 빈 리스트로 설정
+    if user_docs is None:
+        user_docs = []
+    
     query_str = json.dumps(query, ensure_ascii=False, indent=2) 
 
     # 1. 웹 및 DB 문서 섹션 구성
-    ### 💡 수정
+    ### 💡 수정 - link 필드 추가, 없으면 빈 문자열
     web_section = "\n\n".join([
         f"[WEB{i+1}] Title: {doc.get('title', '')}\n"
         f"Snippet: {doc.get('snippet', '')}\n"
-        f"Source: {doc.get('source', 'N/A')} (Link: {doc.get('link', 'N/A')})\n"
+        f"Source: {doc.get('source', 'N/A')}\n"
+        f"Link: {doc.get('link', '') or ''}\n"
         for i, doc in enumerate(web_docs)
     ])
     
@@ -41,7 +46,8 @@ def generate_summary_report(
         f"Content: {doc.get('content', '')}\n"
         f"Keyword: {doc.get('keyword', 'N/A')}\n"
         f"Team Members: {', '.join(doc.get('team_members', [])) or 'N/A'}\n"
-        f"Source: {doc.get('source', 'N/A')} (Link: {doc.get('link', 'N/A')})\n"
+        f"Source: {doc.get('source', 'N/A')}\n"
+        f"Link: {doc.get('link', '') or ''}\n"
         f"Score: {doc.get('score', '')}"
         for i, doc in enumerate(crawling_docs) 
     ])
@@ -51,7 +57,8 @@ def generate_summary_report(
         f"Content: {doc.get('content', '')}\n"
         f"Keyword: {doc.get('keyword', 'N/A')}\n"
         f"Team Members: {', '.join(doc.get('team_members', [])) or 'N/A'}\n"
-        f"Source: {doc.get('source', 'N/A')} (Link: {doc.get('link', 'N/A')})\n"
+        f"Source: {doc.get('source', 'N/A')}\n"
+        f"Link: {doc.get('link', '') or ''}\n"
         f"Score: {doc.get('score', '')}"
         for i, doc in enumerate(user_docs) 
     ])
@@ -122,12 +129,15 @@ def generate_detailed_sources_report(
     query: Dict[str, Any],
     web_docs: List[Dict], 
     crawling_docs: List[Dict],        # 👈 정적 DB (기존 db_docs)
-    user_docs: List[Dict]    # 👈 라이브 DB (신규 user_db_docs)
+    user_docs: List[Dict] = None    # 👈 라이브 DB (신규 user_db_docs) - 기본값 None
 ) -> Dict[str, Any]:
     """
     각 유사 사례(소스)를 상세히 분석하는 보고서(JSON)를 생성합니다.
     """
-
+    # user_docs가 None이면 빈 리스트로 설정
+    if user_docs is None:
+        user_docs = []
+    
     query_str = json.dumps(query, ensure_ascii=False, indent=2)
     
     # 💡 두 DB 결과를 합쳐서 LLM에 전달
@@ -137,10 +147,13 @@ def generate_detailed_sources_report(
     def make_doc_block(docs: List[Dict], prefix: str) -> str:
         blocks = []
         for i, doc in enumerate(docs):
+            # link 필드 처리: 없으면 빈 문자열
+            link = doc.get('link', '') or ''
             block = (
                 f"[{prefix}{i+1}] Title: {doc.get('title', 'N/A')}\n"
                 f"Content: {doc.get('content') or doc.get('snippet', 'N/A')}\n"
-                f"Source: {doc.get('source', 'N/A')} (Link: {doc.get('link', 'N/A')})\n"
+                f"Source: {doc.get('source', 'N/A')}\n"
+                f"Link: {link}\n"
                 f"Keyword: {doc.get('keyword', 'N/A')}\n" 
                 f"Team Members: {', '.join(doc.get('team_members', [])) or 'N/A'}\n"
                 f"Date: {doc.get('date') or doc.get('updatedAt', 'N/A')}\n"
@@ -159,7 +172,7 @@ def generate_detailed_sources_report(
 당신은 창업 아이디어 분석 전문가입니다.
 
 다음은 사용자의 아이디어입니다:
-"{query}"
+{query_str}
 
 아래는 위 아이디어와 관련된 유사 자료 목록입니다. 각 자료를 개별적으로 분석하고 지정된 JSON 형식으로 결과를 존댓말로 출력해주세요.
 ---
@@ -176,8 +189,9 @@ def generate_detailed_sources_report(
 1. `source_type`: "web" 또는 "internal_db"로 지정
 2. `title`: 원본 문서 제목을 기반으로 생성
 3. `summary`: 문서 요약
-4. `score`: 유사도 점수 (정수 또는 실수)
-5. insight: 이 유사 사례의 'Keyword' 필드, 'Team Members' 필드, 'Link' 필드, 'Source' 필드를 활용하여, 현재 아이디어와 이 사례의 차이점 또는 참고할 만한 비즈니스 모델을 중점적으로 분석하여 한국어 존댓말로 서술하세요. Insight는 아래 [Insight 출력 구조 예시]에 따라 작성되어야 합니다.
+4. `link`: 원본 문서의 링크 (없으면 빈 문자열 "")
+5. `score`: 유사도 점수 (정수 또는 실수)
+6. insight: 이 유사 사례의 'Keyword' 필드, 'Team Members' 필드, 'Link' 필드, 'Source' 필드를 활용하여, 현재 아이디어와 이 사례의 차이점 또는 참고할 만한 비즈니스 모델을 중점적으로 분석하여 한국어 존댓말로 서술하세요. Insight는 아래 [Insight 출력 구조 예시]에 따라 작성되어야 합니다.
 [Insight 출력 구조 예시] <기존 아이디어> 개별 일정 관리 중심 단일 사용자 위주 설계 <내 아이디어> 팀플 일정 자동 추천: 캘린더 데이터 기반으로 팀 전체 일정 최적 시간대 자동 제안 프라이버시 존중 일정 공유: 업무명은 숨기고 상태(바쁨/여유)만 표시 → 부담 최소화 집중 모드 연계: 일정 시작 시 자동으로 ‘방해금지 모드 + 모각작 집중방 참여’ 연동 크로스 툴 연결: Notion/Trello와 양방향 싱크 → 프로젝트 관리 + 일정관리 통합
 
 [출력 JSON 형식]
@@ -190,15 +204,17 @@ def generate_detailed_sources_report(
       "source_type": "internal_db",
       "title": "내부 공모전: 스마트 물류 최적화 시스템",
       "summary": "AI 기반 물류 창고 관리 및 경로 최적화 솔루션을 통해 배송 시간을 단축하고 운영 비용을 절감하는 프로젝트. 주요 기술은 딥러닝 예측 모델입니다.",
-      "score": 85.5,
-      "insight": "<기존 아이디어>\n**물류 창고** 대상 B2B 솔루션\n재고 및 경로 예측 최적화 중심\n<내 아이디어>\n**도심 라스트 마일** 배송 효율화: 소규모/다중 배송지 최적 경로 실시간 제안\n자율 드론 배송 통합 모델: 특정 지역(캠퍼스/신도시) 내 **드론 연계** 파일럿 구축\n수익 모델 참고: 초기 설치비 없는 **구독형 SaaS** 및 성능 개선 시 성과 공유 모델 도입\n(Keyword: AI, 물류 최적화, 딥러닝, Team Members: 5명, Source: 내부DB)"
+      "link": "http://internal.db/crawling1",
+      "score": 0.855,
+      "insight": "<기존 아이디어>\n**물류 창고** 대상 B2B 솔루션\n재고 및 경로 예측 최적화 중심\n<내 아이디어>\n**도심 라스트 마일** 배송 효율화: 소규모/다중 배송지 최적 경로 실시간 제안\n자율 드론 배송 통합 모델: 특정 지역(캠퍼스/신도시) 내 **드론 연계** 파일럿 구축\n수익 모델 참고: 초기 설치비 없는 **구독형 SaaS** 및 성능 개선 시 성과 공유 모델 도입\n(Keyword: AI, 물류 최적화, 딥러닝, Team Members: 5명, Source: 내부DB, Link: http://internal.db/crawling1)"
     }},
     {{
       "source_type": "web",
       "title": "2024년 전국 대학생 아이디어 경진대회 최우수상: 지속가능한 폐기물 관리 플랫폼",
       "summary": "블록체인 기술을 활용하여 폐기물 배출부터 처리까지 전 과정을 투명하게 기록하고, 인센티브를 제공하여 시민 참여를 유도하는 플랫폼입니다.",
-      "score": 72,
-      "insight": "<기존 아이디어>\n**블록체인** 기반의 **환경** 문제 해결 플랫폼\n폐기물 투명성 및 시민 인센티브 제공 중심\n<내 아이디어>\n**대학 생활** 환경 특화: 교내 공용 물품/폐기물 순환 및 중고 거래 통합 관리\n**인센티브 모델** 확장: 토큰을 교내 카페, 도서 대여 할인 등 **실질적 보상**과 연계\n기술 참고: 블록체인 대신 AI 기반 **탄소 발자국** 측정으로 기술 차별화 모색\n(Keyword: 블록체인, 환경, 인센티브, Team Members: 4명, Source: 경진대회 공식 홈페이지)"
+      "link": "https://example.com/contest",
+      "score": 0.72,
+      "insight": "<기존 아이디어>\n**블록체인** 기반의 **환경** 문제 해결 플랫폼\n폐기물 투명성 및 시민 인센티브 제공 중심\n<내 아이디어>\n**대학 생활** 환경 특화: 교내 공용 물품/폐기물 순환 및 중고 거래 통합 관리\n**인센티브 모델** 확장: 토큰을 교내 카페, 도서 대여 할인 등 **실질적 보상**과 연계\n기술 참고: 블록체인 대신 AI 기반 **탄소 발자국** 측정으로 기술 차별화 모색\n(Keyword: 블록체인, 환경, 인센티브, Team Members: 4명, Source: 경진대회 공식 홈페이지, Link: https://example.com/contest)"
     }}
   ]
 }}
@@ -222,8 +238,21 @@ def generate_detailed_sources_report(
             report_str = match.group(1)
         
         parsed_json = json.loads(report_str)
+        detailed_results = parsed_json.get("detailed_results", [])
         
-        return {"query": query, "detailed_results": parsed_json.get("detailed_results", []), "raw_report": parsed_json}
+        # 원본 문서와 매핑하여 link 필드 보완
+        # results_list의 순서와 detailed_results의 순서가 일치한다고 가정
+        all_docs = web_docs + all_db_docs
+        for i, result in enumerate(detailed_results):
+            if i < len(all_docs):
+                # LLM이 link를 제공하지 않았거나 빈 문자열인 경우, 원본 문서의 link 사용
+                if not result.get('link') and all_docs[i].get('link'):
+                    result['link'] = all_docs[i].get('link', '')
+                # link 필드가 아예 없는 경우 추가
+                elif 'link' not in result:
+                    result['link'] = all_docs[i].get('link', '')
+        
+        return {"query": query, "detailed_results": detailed_results, "raw_report": parsed_json}
 
     except Exception as e:
         print(f"⚠️ [상세 보고서] GPT 호출 또는 JSON 파싱 오류: {e}")

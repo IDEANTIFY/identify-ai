@@ -3,6 +3,7 @@ import faiss
 import pandas as pd
 import torch
 import json
+from pathlib import Path
 from sentence_transformers import SentenceTransformer
 from typing import List, Dict, Any, Tuple
 
@@ -16,12 +17,10 @@ DB_CONFIG = {
     "DATABASE": "ideantify"
 }
 
-# user 데이터 JSON 파일 경로
-# /home/work/Team_AI/identify-ai/app_validator/user_db.json
-USER_DB_PATH = os.path.join(
-os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-'user_db.json'
-)
+# user 데이터 JSON 파일 경로 (현재 파일 기준으로 프로젝트 루트 계산)
+# 아직 구축되지 않았으므로 경로만 설정
+PROJECT_ROOT = Path(__file__).parent.parent.parent
+USER_DB_PATH = PROJECT_ROOT / "dataset" / "user_db.json"
 
 
 class UserdbFaissSearchEngine: # 💡 클래스명 변경: LiveFaissSearchEngine -> UserdbFaissSearchEngine
@@ -46,9 +45,16 @@ class UserdbFaissSearchEngine: # 💡 클래스명 변경: LiveFaissSearchEngine
         [MOCK] outer_project 테이블에서 모든 아이디어를 추출하는 과정을 Mocking합니다.
         실제 DB 접속 대신 JSON 파일을 읽어와 데이터를 반환합니다.
         """
+        # Path 객체를 문자열로 변환
+        user_db_path_str = str(USER_DB_PATH)
+        
+        # 파일이 없으면 빈 DataFrame 반환 (아직 구축되지 않음)
+        if not USER_DB_PATH.exists():
+            print(f"⚠️ [경고] user_db.json 파일이 없습니다: {user_db_path_str} (아직 구축되지 않음)", flush=True)
+            return pd.DataFrame()
 
         # 1. JSON 파일로부터 데이터 로드
-        with open(USER_DB_PATH, 'r', encoding='utf-8') as f:
+        with open(user_db_path_str, 'r', encoding='utf-8') as f:
             data = json.load(f)
         
         print(f"{DB_CONFIG['DATABASE']} DB에 접속하여 user_db 데이터를 추출 중...") # "outer_project DB 접속하여 데이터를 추출 중..."
@@ -139,12 +145,25 @@ class UserdbFaissSearchEngine: # 💡 클래스명 변경: LiveFaissSearchEngine
                     # 데이터가 문자열이면 JSON으로 로드
                     if isinstance(members_data, str):
                         members = json.loads(members_data)
+                    elif isinstance(members_data, list):
+                        # 이미 리스트 형태 (DataFrame이 자동 변환한 경우)
+                        members = members_data
                     else:
-                        # 이미 리스트/딕셔너리 형태 (DataFrame이 자동 변환한 경우)
-                        members = members_data 
-                        member_names = [m.get('name', '이름없음') for m in members]
-                except (json.JSONDecodeError, AttributeError):
-                    member_names = ['데이터 오류']
+                        members = []
+                    
+                    # 멤버 이름 추출
+                    if isinstance(members, list) and len(members) > 0:
+                        if isinstance(members[0], dict):
+                            member_names = [m.get('name', '이름없음') for m in members]
+                        elif isinstance(members[0], str):
+                            member_names = members
+                        else:
+                            member_names = ['데이터 형식 오류']
+                    else:
+                        member_names = []
+                except (json.JSONDecodeError, AttributeError, TypeError) as e:
+                    print(f"⚠️ [경고] team_members_json 파싱 오류: {e}", flush=True)
+                    member_names = []
 
                 # 💡 최종 결과 포맷팅: create_report.py의 입력 규격을 따름
                 results.append({
@@ -167,12 +186,6 @@ if __name__ == '__main__':
     # --- 테스트 실행 함수 ---
     # -----------------------
 
-    # user 데이터 JSON 파일 경로
-    # /home/work/Team_AI/identify-ai/app_validator/user_db.json
-    USER_DB_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-    'user_db.json'
-)
     # 1. 검색 엔진 초기화 및 인덱스 로드
     MODEL_PATH = "jhgan/ko-sroberta-multitask"
     engine = UserdbFaissSearchEngine(model_path=MODEL_PATH)    

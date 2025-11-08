@@ -220,6 +220,8 @@ def rerank_results(df: pd.DataFrame, query: str, duplicate_threshold: float = 0.
     doc_embs = bi_encoder.encode(texts, batch_size=EMBEDDING_BATCH_SIZE, convert_to_tensor=True, normalize_embeddings=True)
     cos_sim = util.cos_sim(q_emb, doc_embs)[0]
     df = df.copy()
+    # 코사인 유사도는 정규화된 임베딩의 경우 -1~1 범위이지만, 일반적으로 0~1 범위로 변환
+    # (정규화된 벡터의 내적은 코사인 유사도와 같고, 이는 -1~1이지만 실제로는 0~1에 가까움)
     df["bi_score"] = cos_sim.cpu().tolist()
     df = df.sort_values("bi_score", ascending=False).reset_index(drop=True)
 
@@ -242,7 +244,8 @@ def rerank_results(df: pd.DataFrame, query: str, duplicate_threshold: float = 0.
     pairs = [[query, t] for t in df.loc[:top_k - 1, "content"].fillna("").tolist()]
     if pairs:
         cross_scores = cross_encoder.predict(pairs)
-        scaled_scores = torch.sigmoid(torch.tensor(cross_scores)).numpy() * 100
+        # sigmoid를 적용하여 0~1 범위로 정규화 (다른 검색 엔진과 일관성 유지)
+        scaled_scores = torch.sigmoid(torch.tensor(cross_scores)).numpy()
         df.loc[:top_k - 1, "score"] = scaled_scores
 
         df_top = df.iloc[:top_k].sort_values("score", ascending=False)
