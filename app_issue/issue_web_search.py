@@ -4,7 +4,7 @@ import requests
 import json
 import pandas as pd
 from dotenv import load_dotenv
-from dotenv import load_dotenv
+from pathlib import Path
 load_dotenv()
 
 SERPER_API_KEY = os.environ.get("SERPER_API_KEY", "")
@@ -62,10 +62,63 @@ def search_news(keywords, country="kr", num=10):
 
 
 
+def load_user_keywords(user_id="A000"):
+    """
+    user_info JSON 파일에서 keyword 필드를 읽어옴
+    - user_id: 사용자 ID (기본값: A000)
+    - returns: 키워드 리스트 또는 None
+    """
+    # 현재 실행 파일 기준으로 프로젝트 루트의 dataset 폴더 경로 설정
+    project_root = Path(__file__).parent.parent
+    user_info_path = project_root / "dataset" / "user_info" / f"{user_id}.json"
+    
+    try:
+        with open(user_info_path, "r", encoding="utf-8") as f:
+            user_data = json.load(f)
+        
+        # keyword 필드가 있으면 사용, 없으면 interests 사용
+        keywords = user_data.get("keyword")
+        if keywords is None:
+            keywords = user_data.get("interests", [])
+        
+        # 리스트가 아닌 경우 문자열로 변환하여 처리
+        if isinstance(keywords, list):
+            keywords = ", ".join(keywords)
+        elif isinstance(keywords, str):
+            pass
+        else:
+            raise ValueError(f"키워드 형식이 올바르지 않습니다: {type(keywords)}")
+        
+        return keywords
+    except FileNotFoundError:
+        print(f"오류: {user_info_path} 파일을 찾을 수 없습니다.")
+        return None
+    except json.JSONDecodeError:
+        print(f"오류: {user_info_path} 파일의 JSON 형식이 올바르지 않습니다.")
+        return None
+    except Exception as e:
+        print(f"오류: {e}")
+        return None
+
+
 if __name__ == "__main__":
-    ## user_info에 있는 키워드를 입력으로 넣어야 함!
-    issue_news_search = search_news("웹서비스, 대학생, 아이디어")
-    output_path = "issue_news_search.json"
+    # user_info에서 키워드 로드
+    user_id = "A000"  # 필요시 변경 가능
+    keywords = load_user_keywords(user_id)
+    
+    if keywords is None:
+        print("키워드를 불러올 수 없습니다. 프로그램을 종료합니다.")
+        exit(1)
+    
+    # 뉴스 검색 수행
+    issue_news_search = search_news(keywords)
+    
+    # 현재 실행 파일 기준으로 프로젝트 루트의 dataset/user_info 폴더에 저장
+    project_root = Path(__file__).parent.parent
+    output_dir = project_root / "dataset" / "user_info"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / f"issue_news_search_{user_id}.json"
+    
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(issue_news_search)
 
