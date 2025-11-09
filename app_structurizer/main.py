@@ -8,16 +8,15 @@ app = FastAPI(title="Idea Structurizer API")
 
 # Input 모델 정의
 class IdeaText(BaseModel):
-    idea_text: str
+    query: str
 
 # Output 모델 정의 (API 문서화를 위해)
 class StructuredIdea(BaseModel):
-    주요_내용: str
-    도메인: str
-    목적: str
-    차별성: str
-    핵심_기술: str
-    서비스_대상: str
+    summary: str
+    purpose: str
+    differentiation: str
+    technology: str
+    target: str
 
 @app.post("/structure-idea/", response_model=StructuredIdea)
 async def structure_idea_endpoint(request: IdeaText):

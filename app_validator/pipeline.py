@@ -10,12 +10,12 @@ from pathlib import Path
 
 # --- ⚙️ 1. 모듈 임포트 ---
 # 각 기능별로 분리된 Python 파일에서 필요한 함수와 클래스를 가져옵니다.
-from utils.convert_idea_to_query import *
-from utils.web_search_utils import *
-from utils.db_search_utils import *
-from utils.crawling_db_search_utils import CrawlingdbSearchEngine
-from utils.user_db_search_utils import UserdbFaissSearchEngine
-from utils.create_report import *
+from .utils.convert_idea_to_query import *
+from .utils.web_search_utils import *
+from .utils.db_search_utils import *
+from .utils.crawling_db_search_utils import CrawlingdbSearchEngine
+from .utils.user_db_search_utils import UserdbFaissSearchEngine
+from .utils.create_report import *
 
 # --- ✅ 2. 설정 및 전역 객체 초기화 ---
 
@@ -103,7 +103,14 @@ def execute_full_pipeline(structured_idea: dict) -> dict:
 
     # 아이디어 -> 검색 쿼리 변환
     print("\n[단계 1/4] 아이디어를 핵심 검색 쿼리로 변환 중...", flush=True)
-    search_query = generate_search_query(structured_idea)
+    transformed_query = {
+        "summary": structured_idea.get("주요 내용"),
+        "purpose": structured_idea.get("목적"),
+        "differentiation": structured_idea.get("차별성"),
+        "technology": structured_idea.get("핵심 기술"),
+        "target": structured_idea.get("서비스 대상")
+    }
+    search_query = generate_search_query(transformed_query)
     print(f"  🔍 변환된 검색 쿼리: \"{search_query}\"", flush=True)
     
     # 정보 검색 (웹 & DB 병렬 처리)
@@ -221,12 +228,11 @@ if __name__ == '__main__':
         print("\n⚠️  테스트 데이터로 대체합니다...", flush=True)
         # 테스트 데이터 (fallback)
         structured_idea = {
-            "주요 내용": "AI 기반 식단 분석 및 맞춤형 레시피 추천 모바일 앱",
-            "도메인": "건강 및 피트니스, 푸드테크",
-            "목적": "개인 맞춤형 건강 관리 및 식습관 개선",
-            "차별성": "AI를 활용한 자동 식단 분석 및 정밀한 레시피 추천",
-            "핵심 기술": "인공지능(AI), 머신러닝, 이미지 인식(음식 사진 분석)",
-            "서비스 대상": "건강에 관심이 많은 사용자, 특정 식단이 필요한 환자"
+            "summary": "AI 기반 식단 분석 및 맞춤형 레시피 추천 모바일 앱",
+            "purpose": "개인 맞춤형 건강 관리 및 식습관 개선",
+            "differentiation": "AI를 활용한 자동 식단 분석 및 정밀한 레시피 추천",
+            "technology": "인공지능(AI), 머신러닝, 이미지 인식(음식 사진 분석)",
+            "target": "건강에 관심이 많은 사용자, 특정 식단이 필요한 환자"
         }
     
     # 파이프라인을 실행하여 리포트 파일을 생성합니다.

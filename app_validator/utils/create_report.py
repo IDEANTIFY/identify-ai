@@ -10,8 +10,7 @@ load_dotenv()
 
 # --- OpenAI API 클라이언트 초기화 ---
 # .env 파일에 저장된 OPENAI_API_KEY를 사용합니다.
-# client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY_ahyun"))
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 # --- [보고서 1] 요약 보고서 생성 함수 ---
 def generate_summary_report(
@@ -37,6 +36,7 @@ def generate_summary_report(
         f"Snippet: {doc.get('snippet', '')}\n"
         f"Source: {doc.get('source', 'N/A')}\n"
         f"Link: {doc.get('link', '') or ''}\n"
+        f"Keyword: {doc.get('keywords', 'N/A')}\n" # web_search의 키워드 포함
         for i, doc in enumerate(web_docs)
     ])
     
@@ -149,12 +149,18 @@ def generate_detailed_sources_report(
         for i, doc in enumerate(docs):
             # link 필드 처리: 없으면 빈 문자열
             link = doc.get('link', '') or ''
+
+            if prefix == "WEB":
+                keyword_str = doc.get('keywords', 'N/A')
+            else:
+                keyword_str = doc.get('keyword', 'N/A')
+
             block = (
                 f"[{prefix}{i+1}] Title: {doc.get('title', 'N/A')}\n"
                 f"Content: {doc.get('content') or doc.get('snippet', 'N/A')}\n"
                 f"Source: {doc.get('source', 'N/A')}\n"
                 f"Link: {link}\n"
-                f"Keyword: {doc.get('keyword', 'N/A')}\n" 
+                f"Keyword: {keyword_str}\n" 
                 f"Team Members: {', '.join(doc.get('team_members', [])) or 'N/A'}\n"
                 f"Date: {doc.get('date') or doc.get('updatedAt', 'N/A')}\n"
                 f"Score: {doc.get('score', 'N/A')}"
@@ -203,6 +209,7 @@ def generate_detailed_sources_report(
     {{
       "source_type": "internal_db",
       "title": "내부 공모전: 스마트 물류 최적화 시스템",
+      "keywords": "AI, 물류 최적화, 딥러닝",
       "summary": "AI 기반 물류 창고 관리 및 경로 최적화 솔루션을 통해 배송 시간을 단축하고 운영 비용을 절감하는 프로젝트. 주요 기술은 딥러닝 예측 모델입니다.",
       "link": "http://internal.db/crawling1",
       "score": 0.855,
@@ -211,6 +218,7 @@ def generate_detailed_sources_report(
     {{
       "source_type": "web",
       "title": "2024년 전국 대학생 아이디어 경진대회 최우수상: 지속가능한 폐기물 관리 플랫폼",
+      "keywords": "환경, 블록체인, 플랫폼",
       "summary": "블록체인 기술을 활용하여 폐기물 배출부터 처리까지 전 과정을 투명하게 기록하고, 인센티브를 제공하여 시민 참여를 유도하는 플랫폼입니다.",
       "link": "https://example.com/contest",
       "score": 0.72,
@@ -273,13 +281,15 @@ if __name__ == "__main__":
             "title": "BetterHelp, 온라인 심리 상담 시장 선두주자",
             "snippet": "유료 구독 기반으로 심리 전문가와 매칭하는 플랫폼. AI는 사용하지 않음.",
             "source": "TechCrunch",
-            "link": "http://example.com/betterhelp"
+            "link": "http://example.com/betterhelp",
+            "keywords": "멘탈 헬스"
         },
         {
             "title": "Wysa: AI 기반 멘탈 헬스 챗봇, 사용자 500만 돌파",
             "snippet": "초기 심리 지원에 AI를 활용하며, 필요 시 인간 전문가와 연결하는 모델 사용.",
             "source": "Forbes",
-            "link": "http://example.com/wysa"
+            "link": "http://example.com/wysa",
+            "keywords": "AI 챗봇, 멘탈 헬스"
         }
     ]
 

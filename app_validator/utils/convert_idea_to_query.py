@@ -25,16 +25,16 @@ def generate_search_query(structured_info: dict) -> str:
     """
 
     # 입력 딕셔너리의 각 필드가 비어있지 않도록 '정보 없음'으로 기본값 처리
-    fields = ["주요 내용", "도메인", "목적", "차별성", "핵심 기술", "서비스 대상"]
+    # 영문명으로 변경 (백엔드 연동을 위해)
+    fields = ["summary", "purpose", "differentiation", "technology", "target"]
     cleaned_input = {k: (structured_info.get(k) or "정보 없음") for k in fields}
 
     prompt = (
         f"다음 핵심 정보를 조합하여, 시장 조사, 기술 동향, 경쟁 서비스 분석을 위한 "
         f"웹 검색용 명사구 형태의 자연스러운 검색어 1개를 생성해줘.\n\n"
-        f"- 주요 내용: {cleaned_input['주요 내용']}\n"
-        f"- 도메인: {cleaned_input['도메인']}\n"
-        f"- 핵심 기술: {cleaned_input['핵심 기술']}\n"
-        f"- 서비스 대상: {cleaned_input['서비스 대상']}"
+        f"- Summary: {cleaned_input['summary']}\n"
+        f"- Technology: {cleaned_input['technology']}\n"
+        f"- Target: {cleaned_input['target']}"
     )
 
     try:
@@ -49,7 +49,7 @@ def generate_search_query(structured_info: dict) -> str:
         print(f"[경고] API 호출 실패로 기본 쿼리를 생성합니다: {e}")
 
         # API 실패 시, 주요 키워드를 조합하여 대체 쿼리 생성
-        fallback_query = f"{cleaned_input['도메인']} {cleaned_input['핵심 기술']} {cleaned_input['주요 내용']}"
+        fallback_query = f"{cleaned_input['technology']} {cleaned_input['summary']}"
         return fallback_query.replace("정보 없음", "").strip()
 
 # if __name__ == '__main__':
