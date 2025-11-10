@@ -16,6 +16,7 @@ from utils.relevance_utils import check_relevance
 from utils.db_search_utils import DBSearch
 from utils.web_search_utils import WebSearch
 from utils.title_manager import create_chat_title_if_first
+from utils.sqs_server import *
 import concurrent.futures
 
 Intent = Literal["IDEA_DEV", "REPORT_Q", "SITE_DATA_Q", "GENERAL", "SMALL_TALK"]
@@ -306,27 +307,83 @@ class GeneralChatbot:
 
 if __name__ == "__main__":
     load_dotenv()
+
     key = os.getenv("OPENAI_API_KEY")
     if not key:
         print("OPENAI_API_KEY 미설정")
         raise SystemExit(1)
-    user_id = "A000"
-    chat_id = "0000"
+    
+    # SQS 요청큐, 응답큐, 리전 정보 불러오기
+    request_queue_url = os.getenv("AWS_SQS_USER_CHAT_REQUEST_QUEUE")
+    response_queue_url = os.getenv("AWS_SQS_USER_CHAT_RESPONSE_QUEUE")
+    region_name = os.getenv("AWS_DEFAULT_REGION")
 
-    bot = GeneralChatbot(
-        user_id=user_id,
-        chat_id=chat_id,
-        openai_api_key=key
-    )
-    print("\n안녕하세요! 아이디어에 대해 무엇이든 물어보세요.")
-    print("종료하려면 'exit' 또는 'quit'을 입력하세요.\n")
+    print(f"✅ 환경변수 로드 완료:")
+    print(f"   - Request Queue: {request_queue_url}")
+    print(f"   - Response Queue: {response_queue_url}")
+    print(f"   - Region: {region_name}")
 
-    while True:
-        q = input("You: ")
-        if q.lower() in ["exit", "quit"]:
+    # SQS 리소스 및 큐 객체 생성
+    sqs = get_sqs_resource(region_name)
+    request_queue = get_queue(sqs, request_queue_url)
+    response_queue = get_queue(sqs, response_queue_url)
+
+    print("\n🔄 SQS 메시지 처리 루프 시작...\n")
+
+    processed_count = 0
+
+    while has_messages_in_queue(request_queue):
+        try:
+            processed_count += 1
+            print(f"\n{'='*60}")
+            print(f"📨 메시지 #{processed_count} 처리 중...")
+            print(f"{'='*60}\n")
+            
+            # SQS로부터 데이터 가져오기
+            body, message = receive_message_from_sqs(request_queue)
+            if not body:
+                print("⚠️ 메시지 없음 또는 파싱 실패, 다음 메시지로 이동")
+                continue
+
+            # 봇 생성하여 채팅 시작
+            bot = GeneralChatbot(
+                user_id=body.get('user_id'),
+                chat_id=body.get('chat-room-id'),
+                openai_api_key=key
+            )
+            content = body.get('content')
+            print(f"\n🚀 파이프라인 실행 시작: {content}")
+            result = bot.chat(content)
             bot.save_history()
-            print("\n챗봇을 종료합니다.")
-            break
-        print("Bot: 생각 중...", end="", flush=True)
-        a = bot.chat(q)
-        print(f"\rBot: {a}\n")
+
+            # SQS에 데이터 전송
+            print(f"\n📤 결과를 SQS 응답 큐로 전송 중...")
+            message_id = send_message_to_sqs(response_queue, result)
+
+            if message_id:
+                print(f"✅ 메시지 #{processed_count} 처리 완료!")
+                print(f"   MessageId: {message_id}")
+            else:
+                print(f"❌ 메시지 #{processed_count} 전송 실패!")
+                print(f"   결과는 로컬 파일로만 저장되었습니다.")
+                # 실패한 경우에도 계속 진행할지, 중단할지 결정
+                # raise Exception("SQS 전송 실패")
+
+            # 메시지 삭제 (중복 처리 방지)
+            delete_message_from_sqs(message)
+            print("🗑️ 원본 메시지 삭제 완료")
+                
+        except Exception as e:
+            print(f"\n❌ 메시지 #{processed_count} 처리 중 오류 발생:")
+            print(f"   {type(e).__name__}: {e}")
+            import traceback
+            print(traceback.format_exc())
+            # 오류 발생 시 다음 메시지로 계속 진행
+            continue
+
+        # 과도한 API 호출 방지를 위한 잠시 대기
+        time.sleep(1)
+
+    print(f"\n{'='*60}")
+    print(f"✅ 전체 처리 완료! 총 {processed_count}개 메시지 처리")
+    print(f"{'='*60}\n")
