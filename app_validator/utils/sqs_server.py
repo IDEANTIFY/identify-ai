@@ -177,7 +177,7 @@ def send_message_to_sqs(
     Args:
         queue: boto3 SQS Queue 리소스 객체
         message_body: 전송할 메시지 본문 (dict)
-        message_group_id: FIFO 큐용 그룹 ID (기본값: "metadata-group")
+        message_group_id: FIFO 큐용 그룹 ID (기본값: "idea-report-group")
         message_attributes: 선택적 메시지 속성
 
     Returns:

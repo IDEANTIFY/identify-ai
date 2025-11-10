@@ -234,10 +234,23 @@ if __name__ == '__main__':
             # 파이프라인을 실행하여 리포트 파일 생성
             print(f"\n🚀 파이프라인 실행 시작: {body.get('query')}")
             result = execute_full_pipeline(body)
+
+            job_id = body.get('job_id')
+
+            message_attributes = {
+                "messageType": {
+                    "DataType": "String",
+                    "StringValue": "IDEA_REPORT_RESULT"
+                },
+                "jobId": {
+                    "DataType": "String",
+                    "StringValue": job_id
+                }
+            }
             
             # SQS에 데이터 전송
             print(f"\n📤 결과를 SQS 응답 큐로 전송 중...")
-            message_id = send_message_to_sqs(response_queue, result)
+            message_id = send_message_to_sqs(response_queue, result, message_attributes)
             
             if message_id:
                 print(f"✅ 메시지 #{processed_count} 처리 완료!")
@@ -247,6 +260,10 @@ if __name__ == '__main__':
                 print(f"   결과는 로컬 파일로만 저장되었습니다.")
                 # 실패한 경우에도 계속 진행할지, 중단할지 결정
                 # raise Exception("SQS 전송 실패")
+
+            # 메시지 삭제 (중복 처리 방지)
+            delete_message_from_sqs(message)
+            print("🗑️ 원본 메시지 삭제 완료")
                 
         except Exception as e:
             print(f"\n❌ 메시지 #{processed_count} 처리 중 오류 발생:")
