@@ -238,19 +238,13 @@ if __name__ == '__main__':
             job_id = body.get('job_id')
 
             message_attributes = {
-                "messageType": {
-                    "DataType": "String",
-                    "StringValue": "IDEA_REPORT_RESULT"
-                },
-                "jobId": {
-                    "DataType": "String",
-                    "StringValue": job_id
-                }
+                "messageType": "IDEA_REPORT_RESULT",
+                "jobId": job_id
             }
             
             # SQS에 데이터 전송
             print(f"\n📤 결과를 SQS 응답 큐로 전송 중...")
-            message_id = send_message_to_sqs(response_queue, result, message_attributes)
+            message_id = send_message_to_sqs(response_queue, result, message_group_id="idea-report-group", message_attributes=message_attributes)
             
             if message_id:
                 print(f"✅ 메시지 #{processed_count} 처리 완료!")

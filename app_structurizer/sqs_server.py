@@ -169,7 +169,7 @@ def send_message_to_sqs(
     queue,
     message_body: dict,
     message_group_id: str = "metadata-group",
-    message_attributes: dict = None
+    message_attributes: dict | None = None
 ) -> str | None:
     """
     FIFO 큐 전용: SQS로 메시지 전송
@@ -183,16 +183,22 @@ def send_message_to_sqs(
     Returns:
         str | None: 성공 시 MessageId, 실패 시 None
     """
-    if message_attributes is None:
-        message_attributes = {}
-
     try:
+        # message_attributes가 단순 dict이면 boto3 전송용 구조로 변환
+        if message_attributes:
+            converted_attributes = {
+                k: {"DataType": "String", "StringValue": str(v)}
+                for k, v in message_attributes.items()
+            }
+        else:
+            converted_attributes = {}
+
         # FIFO 큐 전용 파라미터 구성
         dedup_id = f"{message_group_id}-{int(time.time() * 1000)}"
 
         params = {
             "MessageBody": json.dumps(message_body, ensure_ascii=False),
-            "MessageAttributes": message_attributes,
+            "MessageAttributes": converted_attributes,
             "MessageGroupId": message_group_id,
             "MessageDeduplicationId": dedup_id
         }

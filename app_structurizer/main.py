@@ -60,12 +60,26 @@ def main():
             # 아이디어 구조화 실행
             result = extract_structured_idea_info(query_text)
 
+            job_id = body.get('job_id')
+
+            message_attributes = {
+                "messageType": {
+                    "DataType": "String",
+                    "StringValue": "IDEA_REPORT"
+                },
+                "jobId": {
+                    "DataType": "String",
+                    "StringValue": job_id
+                }
+            }
+
             # 응답 큐로 결과 전송
             print(f"📤 결과를 SQS 응답 큐로 전송 중...")
             message_id = send_message_to_sqs(
                 response_queue,
                 result,
-                message_group_id="metadata-group"
+                message_group_id="metadata-group",
+                message_attributes=message_attributes
             )
 
             if message_id:
