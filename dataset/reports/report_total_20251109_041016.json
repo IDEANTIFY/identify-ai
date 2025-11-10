@@ -1,0 +1,189 @@
+{
+    "summary_report": {
+        "report_summary": {
+            "total_similar_cases": 10,
+            "evaluation_scores": {
+                "similarity": 65,
+                "creativity": 42,
+                "feasibility": 60
+            },
+            "analysis_narrative": "본 아이디어의 문헌 및 사례 데이터와의 매칭은 중간에서 높음 사이에 위치합니다. 웹상의 경쟁 분석 도구 트렌드, 크롤링 DB의 기술 모니터링/클라우드 기반 솔루션, USER_DB의 AI/IoT/블록체인/AR 기반 서비스가 이미 다수 존재하며, 이는 아이디어의 기술적 컨셉이 현 기술 흐름과 잘 맞다는 것을 시사합니다. 다만 아이디어가 구체적인 문제 해결 대상과 가치 제안을 명확히 제시하지 않으면 차별화 포인트가 약해질 수 있습니다. 따라서 차별점은 특정 도메인(예: 대학생 팀 프로젝트 관리에 AI 인사이트를 더한 솔루션이나, IoT/데이터 분석을 활용한 교육용 피드백 플랫폼 등)으로 한정하고, MVP에서 핵심 기능을 3가지로 구성해 빠르게 검증하는 접근이 바람직합니다. 규제·보안 이슈는 블록체인/데이터 처리 영역에서 주의가 필요하며, 데이터 소스 확보와 사용자 유입 전략이 중요합니다."
+        }
+    },
+    "detailed_report": {
+        "query": {
+            "query": "String",
+            "summary": "String",
+            "purpose": "String",
+            "differentiation": "String",
+            "technology": "String",
+            "target": "String"
+        },
+        "detailed_results": [
+            {
+                "source_type": "web",
+                "title": "전문 서비스 업종 전망: 기술 및 트렌드가 기업에 영향을 미치는 4가지 ...",
+                "summary": "전문 서비스 업종에서 AI 활용으로 효율성 및 생산성 향상, 실시간 인사이트를 통한 의사결정 강화, 인재 유지 및 재교육이 핵심 과제로 부상하는 트렌드를 다룬 글입니다. 2028년까지 관리 컨설턴트 시장 가치 증가 등 전망이 제시됩니다.",
+                "link": "https://blog.workday.com/ko-kr/professional-services-industry-outlook-4-ways-tech-and-trends-will-impact-firms.html",
+                "score": 0.9998167157173157,
+                "insight": "<기존 아이디어>\n전문 서비스 업종에서 AI 도입과 실시간 인사이트, 인재 관리에 집중하는 컨설팅/서비스 모델\n\n<내 아이디어>\n전문 서비스 영역의 실시간 데이터 기반 의사결정 지원 플랫폼: 산업별 맞춤형 예측 대시보드와 워크플로우 자동화, 구독형 SaaS 모델 및 외부 자문사와의 협업 기능 강화\n(Keyword: N/A, Team Members: N/A, Source: N/A, Link: https://blog.workday.com/ko-kr/professional-services-industry-outlook-4-ways-tech-and-trends-will-impact-firms.html)"
+            },
+            {
+                "source_type": "web",
+                "title": "경쟁자 분석을 실시간으로 수행하는 첨단 도구 활용법: 시장 동향을 ...",
+                "summary": "실시간 경쟁자 분석 도구의 도입 사례와 소셜 미디어 분석, 금융/유통 분야의 사례를 통해 실시간 데이터 분석의 중요성과 데이터 프라이버시, 클라우드 기반 분석, 통합 분석 플랫폼의 필요성을 논의합니다.",
+                "link": "https://epart.com/%EA%B2%BD%EC%9F%81%EC%9E%90-%EB%B6%84%EC%84%9D%EC%9D%84-%EC%8B%A4%EC%8B%9C%EA%B0%84%EC%9C%BC%EB%A1%9C-%EC%88%98%ED%96%89%ED%95%98%EB%8A%94-%EC%B2%A8%EB%8B%A8-%EB%8F%84%EA%B5%AC-%ED%99%9A%EC%83%81/",
+                "score": 0.999809205532074,
+                "insight": "<기존 아이디어>\n실시간 경쟁자 분석 도구를 활용한 시장 관찰 및 의사결정 지원\n\n<내 아이디어>\n실시간 경쟁사 분석 플랫폼의 구성요소를 강화: 데이터 프라이버시 준수, 클라우드 기반 분석으로 확장성 확보, 통합 분석 플랫폼으로 여러 데이터 소스의 원스톱 관리, 고객 경험에 초점\n(Keyword: N/A, Team Members: N/A, Source: N/A, Link: https://epart.com/%EA%B2%BD%EC%9F%81%EC%9E%90-%EB%B6%84%EC%84%9D%EC%9D%84-%EC%8B%A4%EC%8B%9C%EA%B0%84%EC%9C%BC%EB%A1%9C-%EC%88%98%ED%96%89%ED%95%98%EB%8A%94-%EC%B2%A8%EB%8B%A8-%EB%8F%84%EA%B5%AC-%ED%99%9A%EC%83%81/)"
+            },
+            {
+                "source_type": "web",
+                "title": "2024년 모바일 앱 경쟁사 분석을 위한 종합 가이드 - FoxData",
+                "summary": "모바일 앱 업계의 트렌드와 소비자 행동, 경쟁사 분석을 위한 구체적 방법을 제시합니다. 다운로드/수익 차트, 상위 차트 모니터링 등 다양한 차원을 활용하는 전략을 안내합니다.",
+                "link": "https://foxdata.com/kr/blogs/a-comprehensive-guide-to-mobile-app-competitor-analysis-in-2024/",
+                "score": 0.9998072981834412,
+                "insight": "<기존 아이디어>\n모바일 앱 경쟁 환경에 대한 체계적 분석 필요성 비교적 일반적 가이드\n\n<내 아이디어>\n경쟁사 분석 자동화에 특화된 플랫폼으로, 차트 기반 모니터링, KPI 대시보드 자동 업데이트, 차별화된 인사이트 시나리오 제시, 크로스 채널 데이터 연동으로 마케팅/제품 전략을 한 번에 제시\n(Keyword: 모바일 앱 경쟁사 분석, Team Members: N/A, Source: N/A, Link: https://foxdata.com/kr/blogs/a-comprehensive-guide-to-mobile-app-competitor-analysis-in-2024/)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "지속적인 기술 모니터링 및 분석을 통해 기업의 기술 위치 변화와 외부 요인을 신속히 파악하고, 전략적으로 대응할 수 있도록 지원하는 솔루션",
+                "summary": "지속적 기술 모니터링과 외부 요인 분석으로 기업의 기술 위치를 파악하고 이에 대비하는 전략적 대응을 지원하는 솔루션에 관한 내부 DB 사례.",
+                "link": "https://www.data.go.kr/suc/awardWinning.do",
+                "score": 0.7092980146408081,
+                "insight": "<기존 아이디어>\n기술 위치 변화와 외부 요인에 대한 모니터링 중심의 솔루션\n<내 아이디어>\n실시간 기술 모니터링 + 예측/의사결정 자동화 SaaS로 확장, 도입 기업의 규모에 맞춘 계층형 기능 제공, 데이터 거버넌스와 보안 강화, 구독 기반 비즈니스 모델로 수익 구조 강화\n(Keyword: 클라우드/SaaS, Team Members: 넥스트솔, Source: 외부, Link: https://www.data.go.kr/suc/awardWinning.do)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "FLOW-BIT",
+                "summary": "6년간 수집된 비트코인 데이터를 LSTM 모델로 학습해 익일 종가를 예측하는 서비스",
+                "link": "https://contest.k-paas.org/awardList_2023.jsp",
+                "score": 0.5377875566482544,
+                "insight": "<기존 아이디어>\n금융 데이터 예측에 특화된 모델/서비스\n<내 아이디어>\n일반화된 자산군 예측 대신, 금융/비금융 도메인 확장을 위한 멀티-자산 예측 모듈 도입, 모델 해석 가능성 및 리스크 관리 기능 강화, SaaS 구독형 제공\n(Keyword: 비트코인 예측 서비스 | LSTM 모델 분석 | 클라우드 플랫폼 활용, Team Members: FLOW-BIT, Source: 외부, Link: https://contest.k-paas.org/awardList_2023.jsp)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "스마트 팜 IoT 기반 유기농 작물 재배 솔루션",
+                "summary": "IoT 센서와 AI를 결합한 스마트 팜 솔루션으로 온도/습도/토양 상태를 실시간 모니터링하고 AI가 최적의 재배 조건을 자동으로 조절하여 품질과 수확량을 향상시킵니다.",
+                "link": "/project/user_004",
+                "score": 0.3690016567707062,
+                "insight": "<기존 아이디어>\nIoT+AI 기반 농업 관리 솔루션\n<내 아이디어>\n도시형/소형 상업 공간 대상으로 재배 환경 자동화와 함께 커뮤니티 기반 작물 교환/공유 모델 도입, 데이터 포털을 통한 생산 이력 관리 및 인증 연계\n(Keyword: IoT, 스마트팜, 유기농, AI, 농업, Team Members: 류성민, 배진호, 신혜원, Source: Iideantify 유저, Link: /project/user_004)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "대학생을 위한 팀플 일정 관리 및 협업 도구",
+                "summary": "대학생 팀 프로젝트를 위한 통합 협업 플랫폼으로, 캘린더 연동과 과제 진행 상황 공유, 최적 회의 시간 제안 기능 등을 제공합니다.",
+                "link": "/project/user_003",
+                "score": 0.3381257951259613,
+                "insight": "<기존 아이디어>\n대학생 대상 팀 프로젝트 협업 도구\n<내 아이디어>\n기업용 팀 프로젝트 관리로 확장하기 위한 다계정/다플랫폼 동기화, 민감정보 최소화 모드, 역할 기반 시각화 대시보드, 교육기관과의 협업 모델 추가\n(Keyword: 팀플, 일정 관리, 협업, 대학생, Team Members: 강미영, 윤태현, 한지우, 오서연, Source: Iideantify 유저, Link: /project/user_003)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "실시간 식품 안전성 검증 블록체인 플랫폼",
+                "summary": "블록체인 기술을 활용해 생산에서 소비까지 식품의 전 과정을 추적하고 안전 정보를 투명하게 공개하는 플랫폼.",
+                "link": "/project/user_002",
+                "score": 0.32549577951431274,
+                "insight": "<기존 아이디어>\n식품 공급망의 투명성과 안전성 강화에 초점\n<내 아이디어>\n기업 대상 B2B 공급망 관리에 특화된 모듈 추가: 위생 관리, 규정 준수 자동 체크, QR 기반 소비자 신뢰 포인트 도입, 다국어 규정 준수 지원\n(Keyword: 식품 안전, 블록체인, 공급망 추적, 투명성, Team Members: 정수진, 최동욱, Source: Iideantify 유저, Link: /project/user_002)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "AR 기반 가상 화장실 데모 및 쇼핑 서비스",
+                "summary": "AR 기술을 활용해 가구/인테리어 품목을 실제 공간에 배치해볼 수 있는 서비스로, 구매 전 시제품 체험을 가능하게 합니다.",
+                "link": "/project/user_008",
+                "score": 0.3139088451862335,
+                "insight": "<기존 아이디어>\nAR 기반 가상 데모를 통한 인테리어 쇼핑 보조\n<내 아이디어>\n가상 체험과 구매 전환을 높이는 XR/AI 추천 엔진 결합, 오프라인 매장과의 연계, B2B 기업용 설치/운영 플랜 제공\n(Keyword: AR, 가상 데모, 인테리어, 쇼핑, Team Members: 박수빈, 최민석, 김나연, Source: Iideantify 유저, Link: /project/user_008)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "AI 기반 개인 맞춤형 영양 관리 플랫폼",
+                "summary": "사용자의 건강 상태, 식습관, 활동량을 분석해 AI가 맞춤형 영양 계획을 제시하는 모바일 앱.",
+                "link": "/project/user_001",
+                "score": 0.2941211760044098,
+                "insight": "<기존 아이디어>\n맞춤형 영양 관리 플랫폼\n<내 아이디어>\n헬스케어 및 피트니스 서비스와의 연계로 건강 데이터 관리 전반을 아우르는 포괄적 플랫폼 구축, 식단 사진 기반 자동 영양소 인식의 정확도 향상, 프리미엄 구독 모델의 연계 혜택 제시\n(Keyword: AI, 영양 관리, 건강 관리, 모바일 앱, Team Members: 김철수, 이영희, 박민수, Source: Iideantify 유저, Link: /project/user_001)"
+            }
+        ],
+        "raw_report": {
+            "detailed_results": [
+                {
+                    "source_type": "web",
+                    "title": "전문 서비스 업종 전망: 기술 및 트렌드가 기업에 영향을 미치는 4가지 ...",
+                    "summary": "전문 서비스 업종에서 AI 활용으로 효율성 및 생산성 향상, 실시간 인사이트를 통한 의사결정 강화, 인재 유지 및 재교육이 핵심 과제로 부상하는 트렌드를 다룬 글입니다. 2028년까지 관리 컨설턴트 시장 가치 증가 등 전망이 제시됩니다.",
+                    "link": "https://blog.workday.com/ko-kr/professional-services-industry-outlook-4-ways-tech-and-trends-will-impact-firms.html",
+                    "score": 0.9998167157173157,
+                    "insight": "<기존 아이디어>\n전문 서비스 업종에서 AI 도입과 실시간 인사이트, 인재 관리에 집중하는 컨설팅/서비스 모델\n\n<내 아이디어>\n전문 서비스 영역의 실시간 데이터 기반 의사결정 지원 플랫폼: 산업별 맞춤형 예측 대시보드와 워크플로우 자동화, 구독형 SaaS 모델 및 외부 자문사와의 협업 기능 강화\n(Keyword: N/A, Team Members: N/A, Source: N/A, Link: https://blog.workday.com/ko-kr/professional-services-industry-outlook-4-ways-tech-and-trends-will-impact-firms.html)"
+                },
+                {
+                    "source_type": "web",
+                    "title": "경쟁자 분석을 실시간으로 수행하는 첨단 도구 활용법: 시장 동향을 ...",
+                    "summary": "실시간 경쟁자 분석 도구의 도입 사례와 소셜 미디어 분석, 금융/유통 분야의 사례를 통해 실시간 데이터 분석의 중요성과 데이터 프라이버시, 클라우드 기반 분석, 통합 분석 플랫폼의 필요성을 논의합니다.",
+                    "link": "https://epart.com/%EA%B2%BD%EC%9F%81%EC%9E%90-%EB%B6%84%EC%84%9D%EC%9D%84-%EC%8B%A4%EC%8B%9C%EA%B0%84%EC%9C%BC%EB%A1%9C-%EC%88%98%ED%96%89%ED%95%98%EB%8A%94-%EC%B2%A8%EB%8B%A8-%EB%8F%84%EA%B5%AC-%ED%99%9A%EC%83%81/",
+                    "score": 0.999809205532074,
+                    "insight": "<기존 아이디어>\n실시간 경쟁자 분석 도구를 활용한 시장 관찰 및 의사결정 지원\n\n<내 아이디어>\n실시간 경쟁사 분석 플랫폼의 구성요소를 강화: 데이터 프라이버시 준수, 클라우드 기반 분석으로 확장성 확보, 통합 분석 플랫폼으로 여러 데이터 소스의 원스톱 관리, 고객 경험에 초점\n(Keyword: N/A, Team Members: N/A, Source: N/A, Link: https://epart.com/%EA%B2%BD%EC%9F%81%EC%9E%90-%EB%B6%84%EC%84%9D%EC%9D%84-%EC%8B%A4%EC%8B%9C%EA%B0%84%EC%9C%BC%EB%A1%9C-%EC%88%98%ED%96%89%ED%95%98%EB%8A%94-%EC%B2%A8%EB%8B%A8-%EB%8F%84%EA%B5%AC-%ED%99%9A%EC%83%81/)"
+                },
+                {
+                    "source_type": "web",
+                    "title": "2024년 모바일 앱 경쟁사 분석을 위한 종합 가이드 - FoxData",
+                    "summary": "모바일 앱 업계의 트렌드와 소비자 행동, 경쟁사 분석을 위한 구체적 방법을 제시합니다. 다운로드/수익 차트, 상위 차트 모니터링 등 다양한 차원을 활용하는 전략을 안내합니다.",
+                    "link": "https://foxdata.com/kr/blogs/a-comprehensive-guide-to-mobile-app-competitor-analysis-in-2024/",
+                    "score": 0.9998072981834412,
+                    "insight": "<기존 아이디어>\n모바일 앱 경쟁 환경에 대한 체계적 분석 필요성 비교적 일반적 가이드\n\n<내 아이디어>\n경쟁사 분석 자동화에 특화된 플랫폼으로, 차트 기반 모니터링, KPI 대시보드 자동 업데이트, 차별화된 인사이트 시나리오 제시, 크로스 채널 데이터 연동으로 마케팅/제품 전략을 한 번에 제시\n(Keyword: 모바일 앱 경쟁사 분석, Team Members: N/A, Source: N/A, Link: https://foxdata.com/kr/blogs/a-comprehensive-guide-to-mobile-app-competitor-analysis-in-2024/)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "지속적인 기술 모니터링 및 분석을 통해 기업의 기술 위치 변화와 외부 요인을 신속히 파악하고, 전략적으로 대응할 수 있도록 지원하는 솔루션",
+                    "summary": "지속적 기술 모니터링과 외부 요인 분석으로 기업의 기술 위치를 파악하고 이에 대비하는 전략적 대응을 지원하는 솔루션에 관한 내부 DB 사례.",
+                    "link": "https://www.data.go.kr/suc/awardWinning.do",
+                    "score": 0.7092980146408081,
+                    "insight": "<기존 아이디어>\n기술 위치 변화와 외부 요인에 대한 모니터링 중심의 솔루션\n<내 아이디어>\n실시간 기술 모니터링 + 예측/의사결정 자동화 SaaS로 확장, 도입 기업의 규모에 맞춘 계층형 기능 제공, 데이터 거버넌스와 보안 강화, 구독 기반 비즈니스 모델로 수익 구조 강화\n(Keyword: 클라우드/SaaS, Team Members: 넥스트솔, Source: 외부, Link: https://www.data.go.kr/suc/awardWinning.do)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "FLOW-BIT",
+                    "summary": "6년간 수집된 비트코인 데이터를 LSTM 모델로 학습해 익일 종가를 예측하는 서비스",
+                    "link": "https://contest.k-paas.org/awardList_2023.jsp",
+                    "score": 0.5377875566482544,
+                    "insight": "<기존 아이디어>\n금융 데이터 예측에 특화된 모델/서비스\n<내 아이디어>\n일반화된 자산군 예측 대신, 금융/비금융 도메인 확장을 위한 멀티-자산 예측 모듈 도입, 모델 해석 가능성 및 리스크 관리 기능 강화, SaaS 구독형 제공\n(Keyword: 비트코인 예측 서비스 | LSTM 모델 분석 | 클라우드 플랫폼 활용, Team Members: FLOW-BIT, Source: 외부, Link: https://contest.k-paas.org/awardList_2023.jsp)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "스마트 팜 IoT 기반 유기농 작물 재배 솔루션",
+                    "summary": "IoT 센서와 AI를 결합한 스마트 팜 솔루션으로 온도/습도/토양 상태를 실시간 모니터링하고 AI가 최적의 재배 조건을 자동으로 조절하여 품질과 수확량을 향상시킵니다.",
+                    "link": "/project/user_004",
+                    "score": 0.3690016567707062,
+                    "insight": "<기존 아이디어>\nIoT+AI 기반 농업 관리 솔루션\n<내 아이디어>\n도시형/소형 상업 공간 대상으로 재배 환경 자동화와 함께 커뮤니티 기반 작물 교환/공유 모델 도입, 데이터 포털을 통한 생산 이력 관리 및 인증 연계\n(Keyword: IoT, 스마트팜, 유기농, AI, 농업, Team Members: 류성민, 배진호, 신혜원, Source: Iideantify 유저, Link: /project/user_004)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "대학생을 위한 팀플 일정 관리 및 협업 도구",
+                    "summary": "대학생 팀 프로젝트를 위한 통합 협업 플랫폼으로, 캘린더 연동과 과제 진행 상황 공유, 최적 회의 시간 제안 기능 등을 제공합니다.",
+                    "link": "/project/user_003",
+                    "score": 0.3381257951259613,
+                    "insight": "<기존 아이디어>\n대학생 대상 팀 프로젝트 협업 도구\n<내 아이디어>\n기업용 팀 프로젝트 관리로 확장하기 위한 다계정/다플랫폼 동기화, 민감정보 최소화 모드, 역할 기반 시각화 대시보드, 교육기관과의 협업 모델 추가\n(Keyword: 팀플, 일정 관리, 협업, 대학생, Team Members: 강미영, 윤태현, 한지우, 오서연, Source: Iideantify 유저, Link: /project/user_003)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "실시간 식품 안전성 검증 블록체인 플랫폼",
+                    "summary": "블록체인 기술을 활용해 생산에서 소비까지 식품의 전 과정을 추적하고 안전 정보를 투명하게 공개하는 플랫폼.",
+                    "link": "/project/user_002",
+                    "score": 0.32549577951431274,
+                    "insight": "<기존 아이디어>\n식품 공급망의 투명성과 안전성 강화에 초점\n<내 아이디어>\n기업 대상 B2B 공급망 관리에 특화된 모듈 추가: 위생 관리, 규정 준수 자동 체크, QR 기반 소비자 신뢰 포인트 도입, 다국어 규정 준수 지원\n(Keyword: 식품 안전, 블록체인, 공급망 추적, 투명성, Team Members: 정수진, 최동욱, Source: Iideantify 유저, Link: /project/user_002)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "AR 기반 가상 화장실 데모 및 쇼핑 서비스",
+                    "summary": "AR 기술을 활용해 가구/인테리어 품목을 실제 공간에 배치해볼 수 있는 서비스로, 구매 전 시제품 체험을 가능하게 합니다.",
+                    "link": "/project/user_008",
+                    "score": 0.3139088451862335,
+                    "insight": "<기존 아이디어>\nAR 기반 가상 데모를 통한 인테리어 쇼핑 보조\n<내 아이디어>\n가상 체험과 구매 전환을 높이는 XR/AI 추천 엔진 결합, 오프라인 매장과의 연계, B2B 기업용 설치/운영 플랜 제공\n(Keyword: AR, 가상 데모, 인테리어, 쇼핑, Team Members: 박수빈, 최민석, 김나연, Source: Iideantify 유저, Link: /project/user_008)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "AI 기반 개인 맞춤형 영양 관리 플랫폼",
+                    "summary": "사용자의 건강 상태, 식습관, 활동량을 분석해 AI가 맞춤형 영양 계획을 제시하는 모바일 앱.",
+                    "link": "/project/user_001",
+                    "score": 0.2941211760044098,
+                    "insight": "<기존 아이디어>\n맞춤형 영양 관리 플랫폼\n<내 아이디어>\n헬스케어 및 피트니스 서비스와의 연계로 건강 데이터 관리 전반을 아우르는 포괄적 플랫폼 구축, 식단 사진 기반 자동 영양소 인식의 정확도 향상, 프리미엄 구독 모델의 연계 혜택 제시\n(Keyword: AI, 영양 관리, 건강 관리, 모바일 앱, Team Members: 김철수, 이영희, 박민수, Source: Iideantify 유저, Link: /project/user_001)"
+                }
+            ]
+        }
+    }
+}

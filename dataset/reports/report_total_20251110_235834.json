@@ -1,0 +1,173 @@
+{
+    "summary_report": {
+        "report_summary": {
+            "total_similar_cases": 9,
+            "evaluation_scores": {
+                "similarity": 65,
+                "creativity": 45,
+                "feasibility": 60
+            },
+            "analysis_narrative": "본 아이디어는 대학생을 대상으로 한 팀 프로젝트 협업 도구를 지향하는 것으로 보입니다. 제시된 자료 중 USER_DB4 와의 기술·목적 중복이 가장 크며, WEB 자료 역시 경쟁 분석 도구나 시장조사 방법 등 일반적 비즈니스 도구와의 연계 가능성을 시사합니다. 다만 차별화 포인트가 다소 모호하고, 대학생 대상의 포화된 협업 도구 시장에서 경쟁력을 확보하려면 구체적 문제 정의(예: 일정 최적화, 과제 관리 워크플로우, 데이터 프라이버시 설계)와 초기 사용자 확보 전략이 필요합니다. 기술적으로는 SaaS/Web 구현이 가능하고, AI 보조 기능이나 통합 커뮤니케이션 도구로 확장도 가능하므로 실현 가능성은 높게 평가됩니다. 따라서 similarity는 중간~높음, creativity는 보통 이하로 평가하되, 차별점과 실행 계획으로 해결 가능성이 있습니다."
+        }
+    },
+    "detailed_report": {
+        "query": {
+            "query": "string",
+            "summary": "string",
+            "purpose": "string",
+            "differentiation": "string",
+            "technology": "string",
+            "target": "string"
+        },
+        "detailed_results": [
+            {
+                "source_type": "web",
+                "title": "경쟁사 분석의 효율적인 도구와 기법: 성공을 위한 필수 요소들",
+                "summary": "경쟁사 분석과 시장 분석의 차이, 경쟁사 분석의 주요 목적 및 활용 방법에 대해 설명합니다. 경쟁사 분석은 특정 기업의 강점/약점, 전략, 제품군, 가격 및 마케팅 등을 평가해 자사 경쟁력을 파악하는 데 초점을 두고, 시장 분석은 시장 규모와 성장, 트렌드, 고객 세그먼트 등을 이해하는 데 주력합니다.",
+                "link": "https://boardmix.com/kr/skills/competitive-analysis/",
+                "score": 0.999886155128479,
+                "insight": "<기존 아이디어> 일반적으로 경쟁사 분석과 시장 분석의 구분 및 프레임워크를 학습하는 수준의 자료. <내 아이디어> 귀하의 창업 아이디어 분석 도구에 이 문서를 참고해 경쟁 인텔리전스의 체계적 도출과 차별점 매핑 기능을 추가하면 좋습니다. 예를 들어 입력 항목(query, summary, purpose, differentiation, technology, target)에 맞춘 자동화된 경쟁 포인트 점검표와 시나리오 비교를 제공할 수 있습니다. (Keyword: N/A, Team Members: N/A, Source: N/A, Link: https://boardmix.com/kr/skills/competitive-analysis/)"
+            },
+            {
+                "source_type": "web",
+                "title": "시장 조사란 무엇인가요? 정의, 유형 및 수행 방법 - SurveyMonkey",
+                "summary": "시장 조사는 시장 규모, 성장 트렌드, 주요 업체 및 향후 전망에 대한 인사이트를 수집하는 과정이며, 경쟁사 분석은 경쟁 상대의 강점/약점을 파악하는 활동임을 설명합니다. 또한 시장 조사의 수행 방법과 해석 단계에 대한 구체적 가이드를 제공합니다.",
+                "link": "https://ko.surveymonkey.com/learn/market-research/",
+                "score": 0.9998791217803955,
+                "insight": "<기존 아이디어> 시장 조사의 정의와 수행 방법 등 기초 프레이밍을 다루는 자료. <내 아이디어> 이 내용을 바탕으로 아이디어 평가 도구에 시장 규모·성장성·경쟁환경 분석 모듈을 추가하고, 고객 세그먼트와 채널 가설의 검증 프로세스를 강화해 아이디어의 시장성을 보다 체계적으로 판단하게 해 드릴 수 있습니다. (Keyword: N/A, Team Members: N/A, Source: N/A, Link: https://ko.surveymonkey.com/learn/market-research/)"
+            },
+            {
+                "source_type": "web",
+                "title": "AI에서 지속 가능성까지: 2024년 이후의 주요 시장 조사 동향",
+                "summary": "실시간 데이터 수집과 소셜 리스닝, 클릭스트림 분석, A/B 테스트, AR/VR의 도입 등 시장조사 트렌드가 빠르게 변화하고 있음을 설명합니다. 실시간 데이터의 중요성과 시스템 간의 통합 확대를 강조합니다.",
+                "link": "https://markelytics.com/ko/%EC%9E%90%EC%9B%90/%EB%B8%94%EB%A1%9C%EA%B7%B8/AI%EC%97%90%EC%84%9C-%EC%A7%80%EC%86%8D-%EA%B0%80%EB%8A%A5%EC%84%B1%EA%B9%8C%EC%A7%80-2024%EB%85%84-%EC%9D%B4%ED%9B%84%EC%9D%98-%EC%A3%BC%EC%9A%94-%EC%8B%9C%EC%9E%A5-%EC%A1%B0%EC%82%AC-%ED%8A%B8%EB%A0%8C%EB%93%9C/",
+                "score": 0.9998667240142822,
+                "insight": "<기존 아이디어> 실시간 데이터 기반의 시장 조사와 신속 의사결정의 필요성을 강조하는 트렌드 문서. <내 아이디어> 귀하의 아이디어 평가 도구에 실시간 피드(소셜 리스닝, 클릭스트림 분석 등)와 AR/VR 시나리오 테스트를 통합하면 아이디어의 실행 가능성과 시장 반응 예측 정확도가 현저히 향상될 수 있습니다. 또한 A/B 테스트를 통해 아이디어의 핵심 요소를 빠르게 검증하도록 지원합니다. (Keyword: N/A, Team Members: N/A, Source: 카테고리블로그, Link: https://markelytics.com/ko/%EC%9E%90%EC%9B%90/%EB%B8%94%EB%A1%9C%EA%B7%B8/AI%EC%97%90%EC%84%9C-%EC%A7%80%EC%86%8D-%EA%B0%80%EB%8A%A5%EC%84%B1%EA%B9%8C%EC%A7%80-2024%EB%85%84-%EC%9D%B4%ED%9B%84%EC%9D%98-%EC%A3%BC%EC%9A%94-%EC%8B%9C%EC%9E%A5-%EC%A1%B0%EC%82%AC-%ED%8A%B8%EB%A0%8C%EB%93%9C/)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "지속적인 기술 모니터링 및 분석을 통해 기업의 기술 위치 변화와 외부 요인을 신속히 파악하고, 전략적으로 대응할 수 있도록 지원하는 솔루션",
+                "summary": "기술 트렌드와 외부 요인을 지속적으로 모니터링하고 분석하여 기업의 기술 위치를 파악하고 대응 전략을 수립하는 솔루션에 관한 자료입니다.",
+                "link": "https://www.data.go.kr/suc/awardWinning.do",
+                "score": 0.6671148538589478,
+                "insight": "<기존 아이디어> 기술 위치 변화와 외부 요인을 모니터링하는 중요성을 제시하는 사례. <내 아이디어> 아이디어 평가 도구에 외부 기술 트렌드 모니터링과 기술 위험 예측 모듈을 추가해 창업 아이디어의 실행 가능성과 리스크를 선제적으로 판단하도록 제안드립니다. (Keyword: 클라우드/SaaS, Source: 외부, Team Members: 넥스트솔, Link: https://www.data.go.kr/suc/awardWinning.do)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "스마트 팜 IoT 기반 유기농 작물 재배 솔루션",
+                "summary": "IoT 센서와 AI를 결합한 스마트 농업 시스템으로, 실시간 모니터링과 최적 조건 자동 조절을 통해 품질과 수확량을 향상시키는 사례입니다.",
+                "link": "/project/user_004",
+                "score": 0.4079313576221466,
+                "insight": "<기존 아이디어> IoT+AI 기반의 데이터 중심 운영 사례를 통해 데이터 의존적 솔루션의 가치가 높음을 시사합니다. <내 아이디어> 아이디어 평가 도구에 다중 소스 데이터 수집과 데이터 품질 관리 가이드를 반영하여, 아이디어의 데이터 의존성과 확장성을 평가하는 기능을 강화할 것을 제안드립니다. (Keyword: IoT, 스마트팜, 유기농, AI, 농업, Source: Iideantify 유저, Team Members: 류성민, 배진호, 신혜원, Link: /project/user_004)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "AR 기반 가상 화장실 데모 및 쇼핑 서비스",
+                "summary": "AR 기술을 활용해 가구/인테리어 소품을 실제 공간에 배치해볼 수 있는 AR 데모 및 쇼핑 서비스에 관한 사례입니다.",
+                "link": "/project/user_008",
+                "score": 0.3778332769870758,
+                "insight": "<기존 아이디어> AR으로 제품 데모를 제공하여 사용자의 구매 의사결정을 돕는 사례. <내 아이디어> 아이디어 평가 도구에 AR/VR 프로토타입 시나리오를 반영하면 이해관계자들이 제안 아이디어를 시각적으로 검토하고 피드백을 제공하는 기능을 강화할 수 있습니다. (Keyword: AR, 가상 데모, 인테리어, 쇼핑, Source: Iideantify 유저, Team Members: 박수빈, 최민석, 김나연, Link: /project/user_008)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "실시간 식품 안전성 검증 블록체인 플랫폼",
+                "summary": "블록체인 기술을 이용해 생산에서 소비까지 품목의 안전성 정보를 투명하게 추적하는 플랫폼 사례입니다.",
+                "link": "/project/user_002",
+                "score": 0.3488294184207916,
+                "insight": "<기존 아이디어> 공급망 추적 및 투명성 강화 사례를 참고. <내 아이디어> 아이디어 평가 도구에 데이터 무결성/추적성 모듈을 도입해 평가 산출물의 신뢰성과 근거를 체계적으로 관리하는 기능을 제안드립니다. (Keyword: 식품 안전, 블록체인, 공급망 추적, 투명성, Source: Iideantify 유저, Team Members: 정수진, 최동욱, Link: /project/user_002)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "대학생을 위한 팀플 일정 관리 및 협업 도구",
+                "summary": "대학생 팀 프로젝트를 위한 통합 협업 플랫폼으로, 일정 분석 및 최적 회의 시간 제안 등의 기능을 제공합니다.",
+                "link": "/project/user_003",
+                "score": 0.34330451488494873,
+                "insight": "<기존 아이디어> 팀 기반 협업 도구의 일정 관리 및 협업 효율화 사례. <내 아이디어> 아이디어 평가 도구에 팀 단위 협업 데이터(팀 구성, 일정, 마일스톤) 연동 기능을 추가해 아이디어 개발 일정의 리스크를 예측하고 자동으로 협업 계획을 제안하는 기능으로 확장할 수 있습니다. (Keyword: 팀플, 일정 관리, 협업, 대학생, Source: Iideantify 유저, Team Members: 강미영, 윤태현, 한지우, 오서연, Link: /project/user_003)"
+            },
+            {
+                "source_type": "internal_db",
+                "title": "AI 기반 개인 맞춤형 영양 관리 플랫폼",
+                "summary": "건강 상태와 식습관을 분석해 AI가 맞춤형 영양 계획을 제공하는 모바일 애플리케이션 사례입니다.",
+                "link": "/project/user_001",
+                "score": 0.32494649291038513,
+                "insight": "<기존 아이디어> 개인 맞춤형 AI 기반 관리 플랫폼의 사례를 통해 데이터 기반 의사결정의 가치를 확인. <내 아이디어> 아이디어 평가 도구에 도메인 특성 기반 가중치를 적용하고, 민감한 정보의 보안/프라이버시 정책을 평가 지표로 반영하는 기능을 제안드립니다. (Keyword: AI, 영양 관리, 건강 관리, 모바일 앱, Source: Iideantify 유저, Team Members: 김철수, 이영희, 박민수, Link: /project/user_001)"
+            }
+        ],
+        "raw_report": {
+            "detailed_results": [
+                {
+                    "source_type": "web",
+                    "title": "경쟁사 분석의 효율적인 도구와 기법: 성공을 위한 필수 요소들",
+                    "summary": "경쟁사 분석과 시장 분석의 차이, 경쟁사 분석의 주요 목적 및 활용 방법에 대해 설명합니다. 경쟁사 분석은 특정 기업의 강점/약점, 전략, 제품군, 가격 및 마케팅 등을 평가해 자사 경쟁력을 파악하는 데 초점을 두고, 시장 분석은 시장 규모와 성장, 트렌드, 고객 세그먼트 등을 이해하는 데 주력합니다.",
+                    "link": "https://boardmix.com/kr/skills/competitive-analysis/",
+                    "score": 0.999886155128479,
+                    "insight": "<기존 아이디어> 일반적으로 경쟁사 분석과 시장 분석의 구분 및 프레임워크를 학습하는 수준의 자료. <내 아이디어> 귀하의 창업 아이디어 분석 도구에 이 문서를 참고해 경쟁 인텔리전스의 체계적 도출과 차별점 매핑 기능을 추가하면 좋습니다. 예를 들어 입력 항목(query, summary, purpose, differentiation, technology, target)에 맞춘 자동화된 경쟁 포인트 점검표와 시나리오 비교를 제공할 수 있습니다. (Keyword: N/A, Team Members: N/A, Source: N/A, Link: https://boardmix.com/kr/skills/competitive-analysis/)"
+                },
+                {
+                    "source_type": "web",
+                    "title": "시장 조사란 무엇인가요? 정의, 유형 및 수행 방법 - SurveyMonkey",
+                    "summary": "시장 조사는 시장 규모, 성장 트렌드, 주요 업체 및 향후 전망에 대한 인사이트를 수집하는 과정이며, 경쟁사 분석은 경쟁 상대의 강점/약점을 파악하는 활동임을 설명합니다. 또한 시장 조사의 수행 방법과 해석 단계에 대한 구체적 가이드를 제공합니다.",
+                    "link": "https://ko.surveymonkey.com/learn/market-research/",
+                    "score": 0.9998791217803955,
+                    "insight": "<기존 아이디어> 시장 조사의 정의와 수행 방법 등 기초 프레이밍을 다루는 자료. <내 아이디어> 이 내용을 바탕으로 아이디어 평가 도구에 시장 규모·성장성·경쟁환경 분석 모듈을 추가하고, 고객 세그먼트와 채널 가설의 검증 프로세스를 강화해 아이디어의 시장성을 보다 체계적으로 판단하게 해 드릴 수 있습니다. (Keyword: N/A, Team Members: N/A, Source: N/A, Link: https://ko.surveymonkey.com/learn/market-research/)"
+                },
+                {
+                    "source_type": "web",
+                    "title": "AI에서 지속 가능성까지: 2024년 이후의 주요 시장 조사 동향",
+                    "summary": "실시간 데이터 수집과 소셜 리스닝, 클릭스트림 분석, A/B 테스트, AR/VR의 도입 등 시장조사 트렌드가 빠르게 변화하고 있음을 설명합니다. 실시간 데이터의 중요성과 시스템 간의 통합 확대를 강조합니다.",
+                    "link": "https://markelytics.com/ko/%EC%9E%90%EC%9B%90/%EB%B8%94%EB%A1%9C%EA%B7%B8/AI%EC%97%90%EC%84%9C-%EC%A7%80%EC%86%8D-%EA%B0%80%EB%8A%A5%EC%84%B1%EA%B9%8C%EC%A7%80-2024%EB%85%84-%EC%9D%B4%ED%9B%84%EC%9D%98-%EC%A3%BC%EC%9A%94-%EC%8B%9C%EC%9E%A5-%EC%A1%B0%EC%82%AC-%ED%8A%B8%EB%A0%8C%EB%93%9C/",
+                    "score": 0.9998667240142822,
+                    "insight": "<기존 아이디어> 실시간 데이터 기반의 시장 조사와 신속 의사결정의 필요성을 강조하는 트렌드 문서. <내 아이디어> 귀하의 아이디어 평가 도구에 실시간 피드(소셜 리스닝, 클릭스트림 분석 등)와 AR/VR 시나리오 테스트를 통합하면 아이디어의 실행 가능성과 시장 반응 예측 정확도가 현저히 향상될 수 있습니다. 또한 A/B 테스트를 통해 아이디어의 핵심 요소를 빠르게 검증하도록 지원합니다. (Keyword: N/A, Team Members: N/A, Source: 카테고리블로그, Link: https://markelytics.com/ko/%EC%9E%90%EC%9B%90/%EB%B8%94%EB%A1%9C%EA%B7%B8/AI%EC%97%90%EC%84%9C-%EC%A7%80%EC%86%8D-%EA%B0%80%EB%8A%A5%EC%84%B1%EA%B9%8C%EC%A7%80-2024%EB%85%84-%EC%9D%B4%ED%9B%84%EC%9D%98-%EC%A3%BC%EC%9A%94-%EC%8B%9C%EC%9E%A5-%EC%A1%B0%EC%82%AC-%ED%8A%B8%EB%A0%8C%EB%93%9C/)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "지속적인 기술 모니터링 및 분석을 통해 기업의 기술 위치 변화와 외부 요인을 신속히 파악하고, 전략적으로 대응할 수 있도록 지원하는 솔루션",
+                    "summary": "기술 트렌드와 외부 요인을 지속적으로 모니터링하고 분석하여 기업의 기술 위치를 파악하고 대응 전략을 수립하는 솔루션에 관한 자료입니다.",
+                    "link": "https://www.data.go.kr/suc/awardWinning.do",
+                    "score": 0.6671148538589478,
+                    "insight": "<기존 아이디어> 기술 위치 변화와 외부 요인을 모니터링하는 중요성을 제시하는 사례. <내 아이디어> 아이디어 평가 도구에 외부 기술 트렌드 모니터링과 기술 위험 예측 모듈을 추가해 창업 아이디어의 실행 가능성과 리스크를 선제적으로 판단하도록 제안드립니다. (Keyword: 클라우드/SaaS, Source: 외부, Team Members: 넥스트솔, Link: https://www.data.go.kr/suc/awardWinning.do)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "스마트 팜 IoT 기반 유기농 작물 재배 솔루션",
+                    "summary": "IoT 센서와 AI를 결합한 스마트 농업 시스템으로, 실시간 모니터링과 최적 조건 자동 조절을 통해 품질과 수확량을 향상시키는 사례입니다.",
+                    "link": "/project/user_004",
+                    "score": 0.4079313576221466,
+                    "insight": "<기존 아이디어> IoT+AI 기반의 데이터 중심 운영 사례를 통해 데이터 의존적 솔루션의 가치가 높음을 시사합니다. <내 아이디어> 아이디어 평가 도구에 다중 소스 데이터 수집과 데이터 품질 관리 가이드를 반영하여, 아이디어의 데이터 의존성과 확장성을 평가하는 기능을 강화할 것을 제안드립니다. (Keyword: IoT, 스마트팜, 유기농, AI, 농업, Source: Iideantify 유저, Team Members: 류성민, 배진호, 신혜원, Link: /project/user_004)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "AR 기반 가상 화장실 데모 및 쇼핑 서비스",
+                    "summary": "AR 기술을 활용해 가구/인테리어 소품을 실제 공간에 배치해볼 수 있는 AR 데모 및 쇼핑 서비스에 관한 사례입니다.",
+                    "link": "/project/user_008",
+                    "score": 0.3778332769870758,
+                    "insight": "<기존 아이디어> AR으로 제품 데모를 제공하여 사용자의 구매 의사결정을 돕는 사례. <내 아이디어> 아이디어 평가 도구에 AR/VR 프로토타입 시나리오를 반영하면 이해관계자들이 제안 아이디어를 시각적으로 검토하고 피드백을 제공하는 기능을 강화할 수 있습니다. (Keyword: AR, 가상 데모, 인테리어, 쇼핑, Source: Iideantify 유저, Team Members: 박수빈, 최민석, 김나연, Link: /project/user_008)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "실시간 식품 안전성 검증 블록체인 플랫폼",
+                    "summary": "블록체인 기술을 이용해 생산에서 소비까지 품목의 안전성 정보를 투명하게 추적하는 플랫폼 사례입니다.",
+                    "link": "/project/user_002",
+                    "score": 0.3488294184207916,
+                    "insight": "<기존 아이디어> 공급망 추적 및 투명성 강화 사례를 참고. <내 아이디어> 아이디어 평가 도구에 데이터 무결성/추적성 모듈을 도입해 평가 산출물의 신뢰성과 근거를 체계적으로 관리하는 기능을 제안드립니다. (Keyword: 식품 안전, 블록체인, 공급망 추적, 투명성, Source: Iideantify 유저, Team Members: 정수진, 최동욱, Link: /project/user_002)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "대학생을 위한 팀플 일정 관리 및 협업 도구",
+                    "summary": "대학생 팀 프로젝트를 위한 통합 협업 플랫폼으로, 일정 분석 및 최적 회의 시간 제안 등의 기능을 제공합니다.",
+                    "link": "/project/user_003",
+                    "score": 0.34330451488494873,
+                    "insight": "<기존 아이디어> 팀 기반 협업 도구의 일정 관리 및 협업 효율화 사례. <내 아이디어> 아이디어 평가 도구에 팀 단위 협업 데이터(팀 구성, 일정, 마일스톤) 연동 기능을 추가해 아이디어 개발 일정의 리스크를 예측하고 자동으로 협업 계획을 제안하는 기능으로 확장할 수 있습니다. (Keyword: 팀플, 일정 관리, 협업, 대학생, Source: Iideantify 유저, Team Members: 강미영, 윤태현, 한지우, 오서연, Link: /project/user_003)"
+                },
+                {
+                    "source_type": "internal_db",
+                    "title": "AI 기반 개인 맞춤형 영양 관리 플랫폼",
+                    "summary": "건강 상태와 식습관을 분석해 AI가 맞춤형 영양 계획을 제공하는 모바일 애플리케이션 사례입니다.",
+                    "link": "/project/user_001",
+                    "score": 0.32494649291038513,
+                    "insight": "<기존 아이디어> 개인 맞춤형 AI 기반 관리 플랫폼의 사례를 통해 데이터 기반 의사결정의 가치를 확인. <내 아이디어> 아이디어 평가 도구에 도메인 특성 기반 가중치를 적용하고, 민감한 정보의 보안/프라이버시 정책을 평가 지표로 반영하는 기능을 제안드립니다. (Keyword: AI, 영양 관리, 건강 관리, 모바일 앱, Source: Iideantify 유저, Team Members: 김철수, 이영희, 박민수, Link: /project/user_001)"
+                }
+            ]
+        }
+    }
+}

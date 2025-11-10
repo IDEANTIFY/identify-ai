@@ -6,6 +6,6 @@
 - 로컬 실행 방법
   - .env 파일을 만들어서 api_key들 기록해두기
   - 터미널 실행 경로를 conference_2025로 맞추기
-  - 가상환경 생성 및 활성화 (python -m venv env, source env/bin/activate)
+  - 가상환경 생성 및 활성화 (python -m venv env, venv\Scripts\activate)
   - 필요 패키지 설치 (pip install -r requirements.txt)
   - 실행시키고 싶은 python 파일 실행 (python3 app_chatbot/chat.py)
