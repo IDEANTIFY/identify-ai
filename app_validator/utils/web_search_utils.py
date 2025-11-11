@@ -1,3 +1,5 @@
+# app_validator/utils/web_search_utils.py
+
 import os
 import re
 import html
@@ -12,13 +14,9 @@ from langchain_tavily import TavilySearch
 from langchain_community.utilities import GoogleSerperAPIWrapper
 from langchain_naver_community.tool import NaverSearchResults, NaverNewsSearch, NaverBlogSearch
 from langchain_naver_community.utils import NaverSearchAPIWrapper
-
 # 공통 설정값
 from dotenv import load_dotenv
 load_dotenv()
-
-# 키워드 생성하는 모듈 활용
-from app_keyword.generator_keyword import generate_keywords_for_api
 
 TAVILY_API_KEY = os.environ.get("TAVILY_API_KEY")
 SERPER_API_KEY = os.environ.get("SERPER_API_KEY")
@@ -45,7 +43,6 @@ TAVILY_EXCLUDE_DOMAINS = None   # 특정 도메인 제외 (리스트)
 # 임베딩 모델 설정
 EMBEDDING_MODEL_NAME = "jhgan/ko-sroberta-multitask" 
 EMBEDDING_BATCH_SIZE = 128                             
-CROSS_ENCODER_MODEL_NAME = "cross-encoder/ms-marco-MiniLM-L-6-v2"  # Cross-Encoder 모델 -> 리랭크를 위한..
 
 # 전처리
 class _Strip(HTMLParser):
@@ -178,9 +175,7 @@ def fetch_all_search_results(query: str) -> pd.DataFrame:
     if not collected:
         return pd.DataFrame()
     df = pd.concat(collected, ignore_index=True)
-    # score 컬럼 제거
-    if "score" in df.columns:
-        df = df.drop(columns=["score"])
+
     # url → link 통합
     if "url" in df.columns:
         if "link" not in df.columns:
@@ -197,20 +192,13 @@ def fetch_all_search_results(query: str) -> pd.DataFrame:
     return df
 
 
-# 임베딩 기반 유사도 재정렬 + Cross-Encoder
+# 임베딩 기반 유사도 재정렬
 bi_encoder = SentenceTransformer(EMBEDDING_MODEL_NAME)
-cross_encoder = CrossEncoder(CROSS_ENCODER_MODEL_NAME)
 
-def rerank_results(df: pd.DataFrame, query: str, duplicate_threshold: float = 0.9,
-                   cross_top_k: int = 50) -> pd.DataFrame:
-    '''
-    Bi-Encoder 기반 1차 정렬 + 중복 제거 후
-    Cross-Encoder로 상위 cross_top_k개만 재정렬
-    '''
+def run_web_search_pipeline(query: str, top_k: int = None, duplicate_threshold: float = 0.9) -> pd.DataFrame:
+    df = fetch_all_search_results(query)
     if df.empty:
         return df
-
-    # 텍스트 컬럼 선택
     if "content" in df.columns:
         texts = df["content"].fillna("").tolist()
     elif "snippet" in df.columns:
@@ -218,17 +206,12 @@ def rerank_results(df: pd.DataFrame, query: str, duplicate_threshold: float = 0.
     else:
         texts = df.iloc[:, 0].astype(str).fillna("").tolist()
 
-    # --- Bi-Encoder ---
     q_emb = bi_encoder.encode(query, convert_to_tensor=True, normalize_embeddings=True)
     doc_embs = bi_encoder.encode(texts, batch_size=EMBEDDING_BATCH_SIZE, convert_to_tensor=True, normalize_embeddings=True)
     cos_sim = util.cos_sim(q_emb, doc_embs)[0]
     df = df.copy()
-    # 코사인 유사도는 정규화된 임베딩의 경우 -1~1 범위이지만, 일반적으로 0~1 범위로 변환
-    # (정규화된 벡터의 내적은 코사인 유사도와 같고, 이는 -1~1이지만 실제로는 0~1에 가까움)
-    df["bi_score"] = cos_sim.cpu().tolist()
-    df = df.sort_values("bi_score", ascending=False).reset_index(drop=True)
-
-    # --- 문서 간 중복 제거 ---
+    df["score"] = cos_sim.cpu().tolist()
+    df = df.sort_values("score", ascending=False).reset_index(drop=True)
     keep_idx = []
     seen = []
     for i, emb in enumerate(doc_embs):
@@ -241,93 +224,15 @@ def rerank_results(df: pd.DataFrame, query: str, duplicate_threshold: float = 0.
             keep_idx.append(i)
             seen.append(emb)
     df = df.iloc[keep_idx].reset_index(drop=True)
-
-    # --- Cross-Encoder (상위만 재정렬) ---
-    top_k = min(len(df), cross_top_k)
-    pairs = [[query, t] for t in df.loc[:top_k - 1, "content"].fillna("").tolist()]
-    if pairs:
-        cross_scores = cross_encoder.predict(pairs)
-        # sigmoid를 적용하여 0~1 범위로 정규화 (다른 검색 엔진과 일관성 유지)
-        scaled_scores = torch.sigmoid(torch.tensor(cross_scores)).numpy()
-        df.loc[:top_k - 1, "score"] = scaled_scores
-
-        df_top = df.iloc[:top_k].sort_values("score", ascending=False)
-        df_rest = df.iloc[top_k:]
-        df = pd.concat([df_top, df_rest], ignore_index=True)
-
-    if "bi_score" in df.columns:
-        df = df.drop(columns=["bi_score"])
+    if top_k is not None:
+        df = df.head(top_k)
 
     return df
 
-# (추가) 행별 키워드 생성을 위한 헬퍼 함수
-def _generate_keywords_for_row(text: str) -> str:
-    """
-    [generator 모듈활용] DataFrame의 각 행(text)을 받아 
-    'Web Search' 모드로 하위 키워드를 생성합니다.
-    """
-    if not text or not isinstance(text, str):
-        return ""
-    
-    # 너무 긴 텍스트는 API 비용/속도 문제로 앞부분만 잘라서 사용
-    truncated_text = text[:500] 
-    
-    try:
-        # 각 행별로는 3개의 키워드만 생성 (k=3)
-        keywords_str = generate_keywords_for_api(   # generator 모듈
-            text=truncated_text,
-            given_upper_keywords=None, 
-            k=3
-        )
-        return keywords_str
-    except Exception as e:
-        print(f"   - ⚠️  [Gen-Row] 행 키워드 생성 실패: {e}")
-        return ""
-
-# 파이프라인
-def run_web_search_pipeline(query: str, top_k: int = None) -> pd.DataFrame:
-    """
-    통합 검색 → Bi-Encoder 유사도 → Cross-Encoder 재정렬 → 상위 k개 반환
-    + 행 별 '하위 키워드' 생성 (Generator 모듈 활용)
-
-    top_k가 None이면 전체 결과 반환
-    """
-    raw_df = fetch_all_search_results(query)
-    ranked_df = rerank_results(raw_df, query, DUPLICATE_THR)
-    if top_k is None:
-        final_df = ranked_df
-    else:
-        final_df = ranked_df.head(top_k)
-
-    # 행(Row)별 하위 키워드 생성 (K회) 
-    print(f" 행(Row)별 키워드 생성 시작 (Top {len(final_df)}건)") 
-    if not final_df.empty:
-        final_df = final_df.copy() 
-
-        # content가 없으면 title로 생성
-        final_df["keywords"] = final_df.apply(
-            lambda row: _generate_keywords_for_row(
-                # pd.notna()로 NaN 또는 None이 아닌지 확인
-                row["content"] if "content" in row and pd.notna(row["content"]) else row["title"]
-            ),
-            axis=1 # 행(row) 단위로 적용
-        )
-    else:
-        pass
-
-    print(f" WEB 파이프라인 종료 (결과: {len(final_df)}건)")
-    return final_df
 
 ## 사용법
 ## run_web_search_pipeline(query, 15)
-# python -m app_validator.utils.web_search_utils
 if __name__ == "__main__":
     result = run_web_search_pipeline("ChatGPT 5", 5)
     result.to_csv("search_results.csv", index=False, encoding="utf-8-sig")
     print(result['score'].unique())
-
-    print("\n--- 최종 검색 결과 (search_results.csv) ---")
-    if not result.empty:
-        print(result[['title', 'score', 'api_source', 'keywords']].to_markdown(index=False, numalign="left", stralign="left"))
-    else:
-        print("검색 결과가 없습니다.")
