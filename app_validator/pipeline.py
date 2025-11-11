@@ -104,7 +104,14 @@ def execute_full_pipeline(structured_idea: dict) -> dict:
 
     # 아이디어 -> 검색 쿼리 변환
     print("\n[단계 1/4] 아이디어를 핵심 검색 쿼리로 변환 중...", flush=True)
-    search_query = generate_search_query(structured_idea)
+    transformed_query = {
+        "summary": structured_idea.get("주요 내용"),
+        "purpose": structured_idea.get("목적"),
+        "differentiation": structured_idea.get("차별성"),
+        "technology": structured_idea.get("핵심 기술"),
+        "target": structured_idea.get("서비스 대상")
+    }
+    search_query = generate_search_query(transformed_query)
     print(f"  🔍 변환된 검색 쿼리: \"{search_query}\"", flush=True)
     
     # 정보 검색 (웹 & DB 병렬 처리)

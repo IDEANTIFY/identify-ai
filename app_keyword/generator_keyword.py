@@ -19,7 +19,7 @@ load_dotenv(PROJECT_ROOT_PATH / ".env")
 # UNMAPPED_CSV_FILE = os.path.join(PROJECT_ROOT_PATH, "dataset", "unmapped_crawling.csv")
 
 # --- OpenAI 클라이언트 초기화 ---
-API_KEY_STRING = os.environ.get("OPENAI_API_KEY_ahyun") 
+API_KEY_STRING = os.environ.get("OPENAI_API_KEY") 
 client: Optional[OpenAI] = None
 if API_KEY_STRING and API_KEY_STRING != "YOUR_API_KEY_HERE":
     try:
@@ -35,36 +35,52 @@ else:
 ## -----------------------------------------------------------------------------
 ## 공통 모듈 (Mapper에서 가져와서 활용)
 ## -----------------------------------------------------------------------------
-from mapper_keyword import prepare_text
+from .mapper_keyword import prepare_text
 
 
 ## -----------------------------------------------------------------------------
 ## 1. API 처리용 함수 (by run_api.py)
 ## 배치 처리에서 하위만 생성할 때 재사용함!
 ## -----------------------------------------------------------------------------
+
 def generate_keywords_for_api(
     text: str, 
-    given_upper_keywords: List[str],  # 최소1개 ~ 최대4개 입력 받을 수 있음
+    given_upper_keywords: Optional[List[str]] = None, # Optional로 변경 (web_search에서도 사용하기 위함 / user_db에서는 최소1개 ~ 최대4개 입력 받을 수 있음)
     k: int = 3
 ) -> List[str]:
     """
-    [Gen-API] 텍스트와 1~4개의 '상위 키워드 리스트'를 받아, 
-    각각 GPT 호출 후 결과를 통합하여 '하위 키워드' Top-K개를 생성합니다.
+    [Gen-API] 텍스트와 상위 키워드 리스트(선택적)를 받아, 
+    상위 키워드 유무에 따라 GPT 호출 후 '하위 키워드' Top-K개를 생성합니다.
+    - given_upper_keywords: 값이 있으면 'User DB' 모드 (하위 키워드만 생성)
+    - given_upper_keywords: None이거나 빈 리스트이면 'Web Search' 모드 (하위 키워드만 생성)
     """
     if not client:
         print("   ❌ [Gen-API] OpenAI client가 없어 생성을 건너뜁니다.")
         return []
-    if not text or not given_upper_keywords:
-        return []
+    
+    # 상위 키워드 유무 체크 ---
+    # given_upper_keywords가 None이 아니고, 빈 리스트가 아닌 경우 True
+    if given_upper_keywords is None:
+        given_upper_keywords = []
+        
+    has_upper_keywords = bool(given_upper_keywords) 
+    # -----------------------------------
 
     final_new_keywords_set = set() # 모든 결과를 합칠 Set
 
-    # [수정] 1~4개의 상위 키워드를 순회
-    for upper_kw in given_upper_keywords:
-        if not upper_kw: continue
-
+    # --------------------------------------------------
+    # 1. (Case 1) 상위 키워드가 주어진 경우 (User DB 시나리오)
+    # --------------------------------------------------
+    # 1~4개의 상위 키워드를 순회
+    if has_upper_keywords:
+        print(f"   ℹ️  [Gen-API] (User DB 모드) 상위 키워드 {len(given_upper_keywords)}개에 대한 하위 키워드 생성 시작.")
+        
+        # User DB 시나리오: 주어진 상위 키워드에 종속된 하위 키워드를 생성
+        for upper_kw in given_upper_keywords:
+            upper_kw_stripped = upper_kw.strip() # 루프 내에서만 strip() 적용
+  
         system_prompt = f"""
-        당신은 텍스트를 분석하여 '{upper_kw}' 카테고리에 속하는
+        당신은 텍스트를 분석하여 '{upper_kw_stripped}' 카테고리에 속하는
         새로운 하위 키워드를 생성하는 AI입니다.
         - 하위 키워드는 명사형으로, 1~3단어 이내로 간결하게 만드세요.
         - 텍스트의 핵심 내용을 잘 반영해야 합니다.
@@ -73,7 +89,7 @@ def generate_keywords_for_api(
         """
         human_prompt = f"""
         텍스트: "{text}"
-        상위 카테고리: "{upper_kw}"
+        상위 카테고리: "{upper_kw_stripped}"
         가장 적합한 하위 키워드 {k}개를 생성해주세요.
         """
         
@@ -91,18 +107,59 @@ def generate_keywords_for_api(
             new_keywords = [kw.strip() for kw in result_text.split(',') if kw.strip()]
             
             if new_keywords:
-                print(f"   ✅ [Gen-API] (상위: {upper_kw}) -> 생성: {new_keywords}")
+                print(f"   ✅ [Gen-API] (UserDB 모드 상위: {upper_kw_stripped}) -> 생성: {new_keywords}")
                 final_new_keywords_set.update(new_keywords) # Set에 누적
             else:
-                 print(f"   ⚠️ [Gen-API] (상위: {upper_kw}) -> GPT가 키워드를 생성하지 못했습니다.")
+                 print(f"   ⚠️ [Gen-API] (UserDB 모드 상위: {upper_kw_stripped}) -> GPT가 키워드를 생성하지 못했습니다.")
             
         except Exception as e:
-            print(f"   ❌ [Gen-API] (상위: {upper_kw}) -> GPT 호출 중 오류: {e}")
+            print(f"   ❌ [Gen-API] (UserDB 모드 상위: {upper_kw_stripped}) -> GPT 호출 중 오류: {e}")
+
+    # --------------------------------------------------
+    # 2. (Case 2) 상위 키워드가 없는 경우 (Web Search 시나리오)
+    # --------------------------------------------------
+    else:
+        print(f"   ℹ️  [Gen-API] (Web Search 모드) 텍스트 기반 하위 키워드 생성 시작.")
+
+        system_prompt = f"""
+        당신은 텍스트를 분석하여 핵심 주제를 가장 잘 대표하는 하위 키워드를 생성하는 AI입니다.
+        - 하위 키워드는 명사형으로, 1~3단어 이내로 간결하게 만드세요.
+        - 텍스트의 핵심 내용을 잘 반영해야 합니다.
+        - 요청한 K개수만큼, 가장 적절한 순서대로 콤마(,)로 구분하여 응답하세요.
+        - 예시: AI 기술, 미래 전망, 윤리 문제
+        """
+        human_prompt = f"""
+        텍스트: "{text}"
+        이 텍스트의 핵심 내용을 가장 잘 설명하는 하위 키워드 {k}개를 생성해주세요.
+        """
+        
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": human_prompt}
+                ],
+                temperature=0.3,
+                max_tokens=50
+            )
+            result_text = response.choices[0].message.content.strip()
+            new_keywords = [kw.strip() for kw in result_text.split(',') if kw.strip()]
+        
+            if new_keywords:
+                final_new_keywords_set.update(new_keywords)
+                print(f"   ✅ [Gen-API] (Web Search 모드) -> 생성된 하위 키워드: {new_keywords}")
+            else:
+                print("   ⚠️ [Gen-API] (Web Search 모드) -> GPT가 키워드를 생성하지 못했습니다.")
+                
+        except Exception as e:
+            print(f"   ❌ [Gen-API] (Web Search 모드) -> GPT 호출 중 오류: {e}")
 
     # 모든 Set 결과를 정렬하여 최종 Top-K 반환
     sorted_final_list = sorted(list(final_new_keywords_set))
-    print(f"   ℹ️  [Gen-API] (종합) 최종 생성 {len(sorted_final_list)}개 -> Top-{k}: {sorted_final_list[:k]}")
-    return sorted_final_list[:k]
+    final_result = sorted_final_list[:k]
+    print(f"   ℹ️  [Gen-API] (종합) 최종 생성 {len(sorted_final_list)}개 -> Top-{k}: {final_result}")
+    return ", ".join(final_result)
 
 ## -----------------------------------------------------------------------------
 ## 2. 배치 처리용 함수 (by run_batch.py)
@@ -199,7 +256,7 @@ def generate_keywords_for_batch(unmapped_df: pd.DataFrame) -> pd.DataFrame:
                 if new_lowers_list:
                     row_dict = row.to_dict()
                     # 기존 상위 키워드는 유지, 생성된 하위 키워드(들) 저장
-                    row_dict['lower_keyword'] = ', '.join(new_lowers_list) # List[str] -> "키워드1, 키워드2" (문자열)로 변환하여 저장
+                    row_dict['lower_keyword'] = new_lowers_list # List[str] -> "키워드1, 키워드2" (문자열)로 변환하여 저장
                     generated_data.append(row_dict)
                     
             except Exception as e_api:
@@ -309,7 +366,7 @@ if __name__ == '__main__':
 
             # --- 2. API 처리 (generate_keywords_for_api) 테스트 ---
             # ... (API 테스트 로직은 동일) ...
-            print("\n\n--- 📌 [2] API 테스트 (Mapper 시나리오별) ---")
+            print("\n\n--- 📌 [2] User DB (API) 테스트 (Mapper 시나리오별) ---")
             
             test_text_api = "정신건강과 피트니스를 위한 루틴"
             print(f"입력 텍스트: \"{test_text_api}\"")
@@ -320,8 +377,15 @@ if __name__ == '__main__':
             print(f"\n[Test 2-3] 상위: [\"IT\", \"헬스케어\"], k=3 (상위 2개 동시 전달)")
             generated_lowers_3 = generate_keywords_for_api(test_text_api, ["IT", "헬스케어"], k=3)
             
-            print("\n--- [ 모든 테스트 완료 ] ---")
 
+            print("\n\n--- 📌 [3] Web Search(API) 테스트 (Mapper 시나리오별) ---")
+            # 📌 Web Search 모드 테스트
+            query_test = "AI 기반 식단 분석 및 맞춤형 레시피 추천 모바일 앱"
+            print(f"\n[Test 3-1] 입력 텍스트: \"{query_test}\"")
+            generated_lowers_4 = generate_keywords_for_api(query_test, k=2)
+            
+            print(f"==================================================\n")
+            print("\n--- [ 모든 테스트 완료 ] ---")
         except Exception as e_main:
             print(f"\n--- [ 테스트 중 오류 발생 ] ---")
             print(f"오류: {e_main}")

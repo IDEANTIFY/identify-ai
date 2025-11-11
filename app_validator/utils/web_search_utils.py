@@ -17,6 +17,9 @@ from langchain_naver_community.utils import NaverSearchAPIWrapper
 from dotenv import load_dotenv
 load_dotenv()
 
+# 키워드 생성하는 모듈 활용
+from app_keyword.generator_keyword import generate_keywords_for_api
+
 TAVILY_API_KEY = os.environ.get("TAVILY_API_KEY")
 SERPER_API_KEY = os.environ.get("SERPER_API_KEY")
 NAVER_CLIENT_ID = os.environ.get("NAVER_CLIENT_ID")
@@ -257,22 +260,74 @@ def rerank_results(df: pd.DataFrame, query: str, duplicate_threshold: float = 0.
 
     return df
 
+# (추가) 행별 키워드 생성을 위한 헬퍼 함수
+def _generate_keywords_for_row(text: str) -> str:
+    """
+    [generator 모듈활용] DataFrame의 각 행(text)을 받아 
+    'Web Search' 모드로 하위 키워드를 생성합니다.
+    """
+    if not text or not isinstance(text, str):
+        return ""
+    
+    # 너무 긴 텍스트는 API 비용/속도 문제로 앞부분만 잘라서 사용
+    truncated_text = text[:500] 
+    
+    try:
+        # 각 행별로는 3개의 키워드만 생성 (k=3)
+        keywords_str = generate_keywords_for_api(   # generator 모듈
+            text=truncated_text,
+            given_upper_keywords=None, 
+            k=3
+        )
+        return keywords_str
+    except Exception as e:
+        print(f"   - ⚠️  [Gen-Row] 행 키워드 생성 실패: {e}")
+        return ""
 
 # 파이프라인
 def run_web_search_pipeline(query: str, top_k: int = None) -> pd.DataFrame:
     """
     통합 검색 → Bi-Encoder 유사도 → Cross-Encoder 재정렬 → 상위 k개 반환
+    + 행 별 '하위 키워드' 생성 (Generator 모듈 활용)
+
     top_k가 None이면 전체 결과 반환
     """
     raw_df = fetch_all_search_results(query)
     ranked_df = rerank_results(raw_df, query, DUPLICATE_THR)
     if top_k is None:
-        return ranked_df
-    return ranked_df.head(top_k)
+        final_df = ranked_df
+    else:
+        final_df = ranked_df.head(top_k)
+
+    # 행(Row)별 하위 키워드 생성 (K회) 
+    print(f" 행(Row)별 키워드 생성 시작 (Top {len(final_df)}건)") 
+    if not final_df.empty:
+        final_df = final_df.copy() 
+
+        # content가 없으면 title로 생성
+        final_df["keywords"] = final_df.apply(
+            lambda row: _generate_keywords_for_row(
+                # pd.notna()로 NaN 또는 None이 아닌지 확인
+                row["content"] if "content" in row and pd.notna(row["content"]) else row["title"]
+            ),
+            axis=1 # 행(row) 단위로 적용
+        )
+    else:
+        pass
+
+    print(f" WEB 파이프라인 종료 (결과: {len(final_df)}건)")
+    return final_df
 
 ## 사용법
 ## run_web_search_pipeline(query, 15)
+# python -m app_validator.utils.web_search_utils
 if __name__ == "__main__":
     result = run_web_search_pipeline("ChatGPT 5", 5)
     result.to_csv("search_results.csv", index=False, encoding="utf-8-sig")
     print(result['score'].unique())
+
+    print("\n--- 최종 검색 결과 (search_results.csv) ---")
+    if not result.empty:
+        print(result[['title', 'score', 'api_source', 'keywords']].to_markdown(index=False, numalign="left", stralign="left"))
+    else:
+        print("검색 결과가 없습니다.")
