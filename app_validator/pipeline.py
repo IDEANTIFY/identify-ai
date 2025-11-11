@@ -12,7 +12,7 @@ from pathlib import Path
 # 각 기능별로 분리된 Python 파일에서 필요한 함수와 클래스를 가져옵니다.
 from utils.convert_idea_to_query import *
 from utils.web_search_utils import *
-from utils.db_search_utils import *
+from utils.user_db_search_utils import *
 from utils.crawling_db_search_utils import CrawlingdbSearchEngine
 from utils.user_db_search_utils import UserdbFaissSearchEngine
 from utils.create_report import *
