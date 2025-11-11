@@ -4,11 +4,16 @@ import os
 import re
 import requests
 import json
+from fastapi import APIRouter
+from pydantic import BaseModel
 from dotenv import load_dotenv
+
 load_dotenv()
 
 SERPER_API_KEY = os.environ.get("SERPER_API_KEY", "")
 SERPER_URL = "https://google.serper.dev/news"
+
+router = APIRouter()
 
 
 def search_news(keywords, country="kr", num=10):
@@ -79,7 +84,18 @@ def search_news(keywords, country="kr", num=10):
         print(f"파일 저장 중 오류 발생 ({save_path}): {e}")
     return results_list
 
-if __name__ == "__main__":
-    test_keywords = "웹서비스, 대학생, 아이디어"
-    results = search_news(test_keywords)
-    results
+# ===============================
+# FastAPI 엔드포인트
+# ===============================
+
+class IssueRequest(BaseModel):
+    keywords: list[str]
+
+@router.post("/search/news")
+async def search_news_api(req: IssueRequest):
+    """
+    백엔드에서 AI 서버로 POST 요청 시,
+    키워드 기반 뉴스 검색 결과를 JSON으로 반환
+    """
+    results = search_news(req.keywords)
+    return {"count": len(results), "results": results}

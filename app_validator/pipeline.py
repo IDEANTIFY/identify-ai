@@ -10,12 +10,13 @@ from pathlib import Path
 
 # --- ⚙️ 1. 모듈 임포트 ---
 # 각 기능별로 분리된 Python 파일에서 필요한 함수와 클래스를 가져옵니다.
-from .utils.convert_idea_to_query import *
-from .utils.web_search_utils import *
-from .utils.db_search_utils import *
-from .utils.crawling_db_search_utils import CrawlingdbSearchEngine
-from .utils.user_db_search_utils import UserdbFaissSearchEngine
-from .utils.create_report import *
+from utils.convert_idea_to_query import *
+from utils.web_search_utils import *
+from utils.db_search_utils import *
+from utils.crawling_db_search_utils import CrawlingdbSearchEngine
+from utils.user_db_search_utils import UserdbFaissSearchEngine
+from utils.create_report import *
+from utils.sqs_server import *
 
 # --- ✅ 2. 설정 및 전역 객체 초기화 ---
 
@@ -187,59 +188,95 @@ def execute_full_pipeline(structured_idea: dict) -> dict:
     
     return final_report
 
-
-def load_structured_idea(file_path: Path = None) -> dict:
-    """
-    dataset 폴더에서 structured_idea.json 파일을 읽어옵니다.
-    
-    Args:
-        file_path: 읽을 파일 경로 (기본값: PROJECT_ROOT/dataset/structured_idea.json)
-    
-    Returns:
-        dict: 구조화된 아이디어 딕셔너리
-    
-    Raises:
-        FileNotFoundError: 파일이 존재하지 않을 경우
-        json.JSONDecodeError: JSON 형식이 올바르지 않을 경우
-    """
-    if file_path is None:
-        file_path = STRUCTURED_IDEA_FILE
-    
-    if not file_path.exists():
-        raise FileNotFoundError(f"❌ [오류] 아이디어 파일을 찾을 수 없습니다: {file_path}")
-    
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            structured_idea = json.load(f)
-        print(f"✅ 아이디어 파일 로드 완료: {file_path}", flush=True)
-        return structured_idea
-    except json.JSONDecodeError as e:
-        error_msg = f"❌ [오류] JSON 형식이 올바르지 않습니다: {file_path} (라인 {e.lineno}, 컬럼 {e.colno})"
-        raise json.JSONDecodeError(error_msg, e.doc, e.pos) from e
-
-
 if __name__ == '__main__':
-    # dataset 폴더에서 실제 아이디어 데이터 로드
-    try:
-        structured_idea = load_structured_idea()
-        print(f"📋 로드된 아이디어: {structured_idea.get('주요 내용', 'N/A')}", flush=True)
-    except (FileNotFoundError, json.JSONDecodeError) as e:
-        print(f"❌ {e}", file=sys.stderr, flush=True)
-        print("\n⚠️  테스트 데이터로 대체합니다...", flush=True)
-        # 테스트 데이터 (fallback)
-        structured_idea = {
-            "summary": "AI 기반 식단 분석 및 맞춤형 레시피 추천 모바일 앱",
-            "purpose": "개인 맞춤형 건강 관리 및 식습관 개선",
-            "differentiation": "AI를 활용한 자동 식단 분석 및 정밀한 레시피 추천",
-            "technology": "인공지능(AI), 머신러닝, 이미지 인식(음식 사진 분석)",
-            "target": "건강에 관심이 많은 사용자, 특정 식단이 필요한 환자"
-        }
+    load_dotenv()
+
+    key = os.getenv("OPENAI_API_KEY")
+    if not key:
+        print("OPENAI_API_KEY 미설정")
+        raise SystemExit(1)
     
-    # 파이프라인을 실행하여 리포트 파일을 생성합니다.
-    execute_full_pipeline(structured_idea)
+    # SQS 요청큐, 응답큐, 리전 정보 불러오기
+    request_queue_url = os.getenv("AWS_SQS_IDEA_REPORT_REQUEST_QUEUE")
+    response_queue_url = os.getenv("AWS_SQS_IDEA_REPORT_RESPONSE_QUEUE")
+    region_name = os.getenv("AWS_DEFAULT_REGION")
+
+    print(f"✅ 환경변수 로드 완료:")
+    print(f"   - Request Queue: {request_queue_url}")
+    print(f"   - Response Queue: {response_queue_url}")
+    print(f"   - Region: {region_name}")
+
+    # SQS 리소스 및 큐 객체 생성
+    sqs = get_sqs_resource(region_name)
+    request_queue = get_queue(sqs, request_queue_url)
+    response_queue = get_queue(sqs, response_queue_url)
+
+    print("\n🔄 SQS 메시지 처리 루프 시작...\n")
+
+    processed_count = 0
+
+    # 메시지 처리 루프
+    while has_messages_in_queue(request_queue):
+        try:
+            processed_count += 1
+            print(f"\n{'='*60}")
+            print(f"📨 메시지 #{processed_count} 처리 중...")
+            print(f"{'='*60}\n")
+            
+            # SQS로부터 데이터 가져오기
+            body, message = receive_message_from_sqs(request_queue)
+            if not body:
+                print("⚠️ 메시지 없음 또는 파싱 실패, 다음 메시지로 이동")
+                continue
+
+            # 필수 필드 확인
+            required_fields = ["query", "summary", "purpose", "differentiation", "technology", "target"]
+            missing_fields = [field for field in required_fields if field not in body]
+            if missing_fields:
+                raise RuntimeError(f"[오류] 메시지에 필수 필드가 없습니다: {', '.join(missing_fields)}")
+            
+            print(f"SQS에서 아이디어 데이터 로드 완료: {request_queue}", flush=True)
+            print(f"   - Query: {body.get('query')}", flush=True)
+                
+            # 파이프라인을 실행하여 리포트 파일 생성
+            print(f"\n🚀 파이프라인 실행 시작: {body.get('query')}")
+            result = execute_full_pipeline(body)
+
+            job_id = body.get('job_id')
+
+            message_attributes = {
+                "messageType": "IDEA_REPORT_RESULT",
+                "jobId": job_id
+            }
+            
+            # SQS에 데이터 전송
+            print(f"\n📤 결과를 SQS 응답 큐로 전송 중...")
+            message_id = send_message_to_sqs(response_queue, result, message_group_id="idea-report-group", message_attributes=message_attributes)
+            
+            if message_id:
+                print(f"✅ 메시지 #{processed_count} 처리 완료!")
+                print(f"   MessageId: {message_id}")
+            else:
+                print(f"❌ 메시지 #{processed_count} 전송 실패!")
+                print(f"   결과는 로컬 파일로만 저장되었습니다.")
+                # 실패한 경우에도 계속 진행할지, 중단할지 결정
+                # raise Exception("SQS 전송 실패")
+
+            # 메시지 삭제 (중복 처리 방지)
+            delete_message_from_sqs(message)
+            print("🗑️ 원본 메시지 삭제 완료")
+                
+        except Exception as e:
+            print(f"\n❌ 메시지 #{processed_count} 처리 중 오류 발생:")
+            print(f"   {type(e).__name__}: {e}")
+            import traceback
+            print(traceback.format_exc())
+            # 오류 발생 시 다음 메시지로 계속 진행
+            continue
+
+        # 과도한 API 호출 방지를 위한 잠시 대기
+        time.sleep(1)
     
-    # 화면 출력 대신 완료 메시지를 표시합니다.
-    print("\n" + "="*80)
-    print(f"✅ 파이프라인 실행이 완료되었습니다.")
-    print(f"📂 '{REPORTS_OUTPUT_DIR}' 폴더에서 생성된 JSON 리포트 파일을 확인하세요.")
-    print("="*80)
+    print(f"\n{'='*60}")
+    print(f"✅ 전체 처리 완료! 총 {processed_count}개 메시지 처리")
+    print(f"{'='*60}\n")
