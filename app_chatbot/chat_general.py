@@ -314,8 +314,8 @@ if __name__ == "__main__":
         raise SystemExit(1)
     
     # SQS 요청큐, 응답큐, 리전 정보 불러오기
-    request_queue_url = os.getenv("AWS_SQS_USER_CHAT_REQUEST_QUEUE")
-    response_queue_url = os.getenv("AWS_SQS_USER_CHAT_RESPONSE_QUEUE")
+    request_queue_url = os.getenv("AWS_SQS_CHAT_USER_REQUEST_QUEUE")
+    response_queue_url = os.getenv("AWS_SQS_CHAT_USER_RESPONSE_QUEUE")
     region_name = os.getenv("AWS_DEFAULT_REGION")
 
     print(f"✅ 환경변수 로드 완료:")
