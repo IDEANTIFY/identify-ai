@@ -199,7 +199,7 @@ if __name__ == "__main__":
             # SQS 응답 메시지 구성
             print(f"\n📤 결과를 SQS 응답 큐로 전송 중...")
             response_body = {
-                "chatRoomId": chat_room_id,
+                "chat_room_id": chat_room_id,
                 "title": title if title else "",  # 첫 응답일 때만 제목 포함
                 "content": content
             }
