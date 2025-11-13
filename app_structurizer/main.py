@@ -54,23 +54,24 @@ def main():
                 print("⚠️ 메시지 없음 또는 파싱 실패, 다음 메시지로 이동")
                 continue
 
+            # 메시지 속성에서 jobId 가져오기
+            message_attrs = message.message_attributes if message else {}
+            job_id = None
+            if message_attrs.get('jobId'):
+                job_id = message_attrs.get('jobId').get('StringValue')
+            else:
+                job_id = body.get('jobId')
+
             query_text = body.get("query") or body.get("text") or ""
             print(f"🚀 파이프라인 실행: {query_text[:80]}...")
 
             # 아이디어 구조화 실행
             result = extract_structured_idea_info(query_text)
 
-            job_id = body.get('job_id')
-
+            # 3. 응답 메시지 전송
             message_attributes = {
-                "messageType": {
-                    "DataType": "String",
-                    "StringValue": "IDEA_REPORT"
-                },
-                "jobId": {
-                    "DataType": "String",
-                    "StringValue": job_id
-                }
+                "messageType": "IDEA_REPORT",
+                "jobId": str(job_id)
             }
 
             # 응답 큐로 결과 전송
