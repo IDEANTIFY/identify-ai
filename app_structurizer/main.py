@@ -70,8 +70,7 @@ def main():
 
             # 3. 응답 메시지 전송
             message_attributes = {
-                "messageType": "IDEA_REPORT",
-                "jobId": str(job_id)
+                "id": str(job_id)
             }
 
             # 응답 큐로 결과 전송

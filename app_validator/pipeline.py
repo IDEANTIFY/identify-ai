@@ -229,6 +229,17 @@ if __name__ == '__main__':
                 print("⚠️ 메시지 없음 또는 파싱 실패, 다음 메시지로 이동")
                 continue
 
+            # 메시지 속성에서 jobId 가져오기
+            message_attrs = message.message_attributes if message else {}
+            job_id = None
+            if message_attrs.get('jobId'):
+                job_id = message_attrs.get('jobId').get('StringValue')
+            else:
+                job_id = body.get('jobId')
+
+            query_text = body.get("query") or body.get("text") or ""
+            print(f"🚀 파이프라인 실행: {query_text[:80]}...")
+
             # 필수 필드 확인
             required_fields = ["query", "summary", "purpose", "differentiation", "technology", "target"]
             missing_fields = [field for field in required_fields if field not in body]
@@ -242,11 +253,9 @@ if __name__ == '__main__':
             print(f"\n🚀 파이프라인 실행 시작: {body.get('query')}")
             result = execute_full_pipeline(body)
 
-            job_id = body.get('job_id')
-
+            # 3. 응답 메시지 전송
             message_attributes = {
-                "messageType": "IDEA_REPORT_RESULT",
-                "jobId": job_id
+                "id": str(job_id)
             }
             
             # SQS에 데이터 전송
