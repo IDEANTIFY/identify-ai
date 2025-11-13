@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  ai-server:
+    build: .
+    container_name: ai-server
+    command: uvicorn app_chatbot.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    restart: always
+
+  worker_chat_general:
+    build: .
+    container_name: worker_chat_general
+    command: python app_chatbot/chat_general.py
+    env_file:
+      - .env
+    restart: always
+
+  worker_chat_idea_develop:
+    build: .
+    container_name: worker_chat_idea_develop
+    command: python app_chatbot/chat_idea_develop.py
+    env_file:
+      - .env
+    restart: always
+
+  worker_chat_idea_report:
+    build: .
+    container_name: worker_chat_idea_report
+    command: python app_chatbot/chat_idea_report.py
+    env_file:
+      - .env
+    restart: always
+
+  worker_structurizer:
+    build: .
+    container_name: worker_structurizer
+    command: python app_structurizer/main.py
+    env_file:
+      - .env
+    restart: always
+
+  worker_validator:
+    build: .
+    container_name: worker_validator
+    command: python app_validator/pipeline.py
+    env_file:
+      - .env
+    restart: always
