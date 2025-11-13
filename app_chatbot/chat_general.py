@@ -285,17 +285,6 @@ class GeneralChatbot:
         # 응답 저장
         self.memory.chat_memory.add_message(AIMessage(content=ans))
         
-        # 첫 대화인 경우 제목 생성
-        from utils.title_manager import is_first_chat
-        if is_first_chat(self.user_id, self.chat_id):
-            create_chat_title_if_first(
-                user_id=self.user_id,
-                chat_id=self.chat_id,
-                first_user_input=user_input,
-                first_ai_response=ans,
-                openai_api_key=self.openai_api_key
-            )
-        
         return ans
 
     def save_history(self):
@@ -353,12 +342,14 @@ if __name__ == "__main__":
             )
             content = body.get('content')
             print(f"\n🚀 파이프라인 실행 시작: {content}")
-            result = bot.chat(content)
+            content = bot.chat(content)
+
             bot.save_history()
 
             # SQS에 데이터 전송
             print(f"\n📤 결과를 SQS 응답 큐로 전송 중...")
-            message_id = send_message_to_sqs(response_queue, result)
+            message_id = send_message_to_sqs(response_queue, content)
+            print(f"cotent: {content}")
 
             if message_id:
                 print(f"✅ 메시지 #{processed_count} 처리 완료!")

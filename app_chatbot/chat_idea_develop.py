@@ -153,12 +153,13 @@ if __name__ == "__main__":
             )
             content = body.get('content')
             print(f"\n🚀 파이프라인 실행 시작: {content}")
-            result = bot.chat(content)
+            content = bot.chat(content)
             bot.save_history()
 
             # SQS에 데이터 전송
             print(f"\n📤 결과를 SQS 응답 큐로 전송 중...")
-            message_id = send_message_to_sqs(response_queue, result)
+            message_id = send_message_to_sqs(response_queue, content)
+            print(f"cotent: {content}")
 
             if message_id:
                 print(f"✅ 메시지 #{processed_count} 처리 완료!")
