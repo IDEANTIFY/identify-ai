@@ -141,7 +141,7 @@ if __name__ == "__main__":
             
             # SQS로부터 데이터 가져오기
             body_raw, message = receive_message_from_sqs(request_queue)
-            if not body:
+            if not body_raw:
                 print("⚠️ 메시지 없음 또는 파싱 실패, 다음 메시지로 이동")
                 continue
 
