@@ -140,13 +140,10 @@ if __name__ == "__main__":
             print(f"{'='*60}\n")
             
             # SQS로부터 데이터 가져오기
-            body_raw, message = receive_message_from_sqs(request_queue)
-            if not body_raw:
+            body, message = receive_message_from_sqs(request_queue)
+            if not body:
                 print("⚠️ 메시지 없음 또는 파싱 실패, 다음 메시지로 이동")
                 continue
-
-            # 문자열이면 JSON 파싱
-            body = json.loads(body_raw) if isinstance(body_raw, str) else body_raw
 
             # 봇 생성하여 채팅 시작
             bot = IdeaDevelopChatbot(
