@@ -111,26 +111,31 @@ class IdeaReportChatbot:
 ---
 """
 
-    def chat(self, user_input: str) -> str:
-        """사용자 입력에 대한 챗봇의 응답을 반환합니다."""
+    def chat(self, user_input: str) -> tuple[str, Optional[str]]:
+        """사용자 입력에 대한 챗봇의 응답을 반환합니다.
+
+        Returns:
+            tuple[str, Optional[str]]: (AI 응답 내용, 채팅방 제목 또는 None)
+        """
         try:
             response = self.chain.invoke({"user_input": user_input})
             ans = response.get('text', "오류: 응답 텍스트를 찾을 수 없습니다.")
         except Exception as e:
             ans = f"API 호출 중 오류가 발생했습니다: {e}"
-        
+
         # 첫 대화인 경우 제목 생성
+        title = None
         from utils.title_manager import is_first_chat
         if is_first_chat(self.user_id, self.chat_id):
-            create_chat_title_if_first(
+            title = create_chat_title_if_first(
                 user_id=self.user_id,
                 chat_id=self.chat_id,
                 first_user_input=user_input,
                 first_ai_response=ans,
                 openai_api_key=self.openai_api_key
             )
-        
-        return ans
+
+        return ans, title
 
     def save_history(self):
         """대화 기록 저장 함수"""
@@ -179,20 +184,38 @@ if __name__ == "__main__":
             print(f"{'='*60}\n")
 
             # 봇 생성하여 채팅 시작
+            chat_room_id = body.get('chat-room-id')
             bot = IdeaReportChatbot(
                 user_id=body.get('user_id'),
-                chat_id=body.get('chat-room-id'),
+                chat_id=chat_room_id,
                 report_json=body.get('idea-report-data'),
                 openai_api_key=key
             )
-            content = body.get('content')
-            print(f"\n🚀 파이프라인 실행 시작: {content}")
-            result = bot.chat(content)
+            user_message = body.get('content')
+            print(f"\n🚀 파이프라인 실행 시작: {user_message}")
+            content, title = bot.chat(user_message)
             bot.save_history()
 
-            # SQS에 데이터 전송
+            # SQS 응답 메시지 구성
             print(f"\n📤 결과를 SQS 응답 큐로 전송 중...")
-            message_id = send_message_to_sqs(response_queue, result)
+            response_body = {
+                "chat_room_id": chat_room_id,
+                "title": title if title else "",  # 첫 응답일 때만 제목 포함
+                "content": content
+            }
+            message_attributes = {
+                "chatRoomId": chat_room_id
+            }
+
+            # SQS에 데이터 전송
+            message_id = send_message_to_sqs(
+                response_queue,
+                message_body=response_body,
+                message_attributes=message_attributes
+            )
+            print(f"content: {content}")
+            print(f"title: {title}")
+            print(f"chatRoomId: {chat_room_id}")
 
             if message_id:
                 print(f"✅ 메시지 #{processed_count} 처리 완료!")

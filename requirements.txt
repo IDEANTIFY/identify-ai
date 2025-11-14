@@ -36,3 +36,6 @@ pandas
 # faiss-gpu==1.7.2
 
 dotenv
+
+boto3
+rank_bm25

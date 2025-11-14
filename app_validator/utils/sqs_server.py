@@ -72,13 +72,13 @@ def get_queue_message_count(queue) -> int:
         return -1
 
 
-def receive_message_from_sqs(queue, wait_time: int = 20):
+def receive_message_from_sqs(queue, wait_time: int = 1):
     """
     SQS에서 메시지 하나 수신 (Long Polling)
     
     Args:
         queue: boto3 SQS Queue 객체
-        wait_time: Long Polling 대기 시간 (초, 기본값: 20)
+        wait_time: Long Polling 대기 시간 (초, 기본값: 1)
     
     Returns:
         tuple: (메시지 본문 dict, message 객체) 또는 (None, None)
@@ -107,7 +107,7 @@ def receive_message_from_sqs(queue, wait_time: int = 20):
         return None, None
 
 
-def receive_messages_batch(queue, max_messages: int = 10, wait_time: int = 20):
+def receive_messages_batch(queue, max_messages: int = 10, wait_time: int = 1):
     """
     SQS에서 여러 메시지 수신 (배치)
     
