@@ -184,7 +184,7 @@ if __name__ == "__main__":
             print(f"{'='*60}\n")
 
             # 봇 생성하여 채팅 시작
-            chat_room_id = body.get('chat-room-id')
+            chat_room_id = body.get('chat_room_id') or body.get('chatRoomId')
             bot = IdeaReportChatbot(
                 user_id=body.get('user_id'),
                 chat_id=chat_room_id,
