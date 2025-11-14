@@ -370,10 +370,7 @@ if __name__ == "__main__":
                 "content": content
             }
             message_attributes = {
-                "chatRoomId": {
-                    "DataType": "String",
-                    "StringValue": chat_room_id
-                }
+                "chatRoomId": chat_room_id
             }
 
             # SQS에 데이터 전송

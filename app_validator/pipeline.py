@@ -255,10 +255,7 @@ if __name__ == '__main__':
 
             # 3. 응답 메시지 전송
             message_attributes = {
-                "id": {
-                    "DataType": "String",
-                    "StringValue": str(job_id)
-                }
+                "id": str(job_id)
             }
             
             # SQS에 데이터 전송
