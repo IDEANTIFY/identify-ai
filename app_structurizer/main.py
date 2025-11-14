@@ -67,7 +67,7 @@ def main():
                     "DataType": "String",
                     "StringValue": "IDEA_REPORT"
                 },
-                "jobId": {
+                "id": {
                     "DataType": "String",
                     "StringValue": job_id
                 }
