@@ -211,23 +211,23 @@ if __name__ == '__main__':
     request_queue = get_queue(sqs, request_queue_url)
     response_queue = get_queue(sqs, response_queue_url)
 
-    print("\n🔄 SQS 메시지 처리 루프 시작...\n")
+    print("\n🔄 SQS 메시지 처리 루프 시작 (무한 대기)...\n")
 
     processed_count = 0
 
     # 메시지 처리 루프
-    while has_messages_in_queue(request_queue):
+    while True:  # 무한 루프로 변경 - 메시지가 없어도 계속 대기
         try:
+            # SQS로부터 데이터 가져오기 (Long Polling으로 자동 대기)
+            body, message = receive_message_from_sqs(request_queue)
+            if not body:
+                print("⚠️ 메시지 없음 또는 파싱 실패, 계속 대기 중...")
+                continue
+
             processed_count += 1
             print(f"\n{'='*60}")
             print(f"📨 메시지 #{processed_count} 처리 중...")
             print(f"{'='*60}\n")
-            
-            # SQS로부터 데이터 가져오기
-            body, message = receive_message_from_sqs(request_queue)
-            if not body:
-                print("⚠️ 메시지 없음 또는 파싱 실패, 다음 메시지로 이동")
-                continue
 
             # 필수 필드 확인
             required_fields = ["query", "summary", "purpose", "differentiation", "technology", "target"]
@@ -276,7 +276,3 @@ if __name__ == '__main__':
 
         # 과도한 API 호출 방지를 위한 잠시 대기
         time.sleep(1)
-    
-    print(f"\n{'='*60}")
-    print(f"✅ 전체 처리 완료! 총 {processed_count}개 메시지 처리")
-    print(f"{'='*60}\n")
