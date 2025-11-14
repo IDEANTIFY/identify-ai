@@ -72,7 +72,7 @@ def get_queue_message_count(queue) -> int:
         return -1
 
 
-def receive_message_from_sqs(queue, wait_time: int = 20):
+def receive_message_from_sqs(queue, wait_time: int = 1):
     """
     SQS에서 메시지 하나 수신 (Long Polling)
     
@@ -107,7 +107,7 @@ def receive_message_from_sqs(queue, wait_time: int = 20):
         return None, None
 
 
-def receive_messages_batch(queue, max_messages: int = 10, wait_time: int = 20):
+def receive_messages_batch(queue, max_messages: int = 10, wait_time: int = 1):
     """
     SQS에서 여러 메시지 수신 (배치)
     
